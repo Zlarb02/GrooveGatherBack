@@ -14,15 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.groovegather.back.entities.UserEntity;
+import com.groovegather.back.repositories.GenreRepo;
 import com.groovegather.back.repositories.UserRepo;
 
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final UserRepo userRepo;
+    private GenreRepo genreRepo;
 
     public UserController(UserRepo userRepo) {
         this.userRepo = userRepo;
+        this.genreRepo = genreRepo;
     }
 
     @GetMapping("")
