@@ -2,6 +2,8 @@ package com.groovegather.back.entities;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -25,6 +27,7 @@ public class SkillEntity {
     private Boolean isMissing;
 
     @ManyToMany(mappedBy = "skills")
+    @JsonIgnore
     private List<ProjectEntity> projects;
 
 }
