@@ -45,7 +45,7 @@ public class ProjectEntity {
     @JoinTable(name = "project_skill", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "skill_name"))
     private List<SkillEntity> skills = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "project_genre", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "genre_name"))
     private List<GenreEntity> genres = new ArrayList<>();
 

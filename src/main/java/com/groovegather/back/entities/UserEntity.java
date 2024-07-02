@@ -15,6 +15,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,6 +39,10 @@ public class UserEntity {
     private String password;
 
     @Column(nullable = false, length = 200)
+    @Transient
+    private String repeatedPassword;
+
+    @Column(nullable = false, length = 200)
     private String email;
 
     @Column(nullable = false, length = 2000)
@@ -55,7 +60,7 @@ public class UserEntity {
     @Column(nullable = false)
     private Integer subscriptionLevel;
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "user_genre", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "genre_name"))
     private Collection<GenreEntity> genres = new ArrayList<>();
 
