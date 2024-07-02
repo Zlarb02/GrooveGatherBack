@@ -6,4 +6,6 @@ import com.groovegather.back.entities.SkillEntity;
 
 public interface SkillRepo extends JpaRepository<SkillEntity, String> {
 
+    SkillEntity findByName(String name);
+
 }

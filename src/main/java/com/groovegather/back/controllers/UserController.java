@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.groovegather.back.dto.user.UserPostDto;
 import com.groovegather.back.entities.UserEntity;
 import com.groovegather.back.repositories.GenreRepo;
 import com.groovegather.back.repositories.UserRepo;
@@ -39,8 +40,8 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity userEntity) {
-        UserEntity createdUser = userService.createUser(userEntity);
+    public ResponseEntity<UserEntity> createUser(@RequestBody UserPostDto userPostDto) {
+        UserEntity createdUser = userService.createUser(userPostDto);
         return ResponseEntity.ok(createdUser);
     }
 

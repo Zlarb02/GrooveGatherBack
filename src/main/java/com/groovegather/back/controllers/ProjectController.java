@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.groovegather.back.dto.project.ProjectPostDto;
 import com.groovegather.back.entities.ProjectEntity;
 import com.groovegather.back.repositories.ProjectRepo;
 import com.groovegather.back.services.ProjectService;
@@ -41,8 +42,8 @@ public class ProjectController {
     private ProjectService projectService;
 
     @PostMapping
-    public ResponseEntity<ProjectEntity> createProject(@RequestBody ProjectEntity projectEntity) {
-        ProjectEntity createdProject = projectService.createProject(projectEntity);
+    public ResponseEntity<ProjectEntity> createProject(@RequestBody ProjectPostDto projectPostDto) {
+        ProjectEntity createdProject = projectService.createProject(projectPostDto);
         return ResponseEntity.ok(createdProject);
     }
 

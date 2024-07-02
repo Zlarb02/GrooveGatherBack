@@ -39,7 +39,7 @@ public class ProjectEntity {
     private String color;
 
     @Column(nullable = false)
-    private Integer likes;
+    private Integer likes = 0;
 
     @ManyToMany
     @JoinTable(name = "project_skill", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "skill_name"))
