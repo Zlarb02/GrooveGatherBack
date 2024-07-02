@@ -2,6 +2,7 @@ package com.groovegather.back.controllers;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,15 +15,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.groovegather.back.entities.UserEntity;
+import com.groovegather.back.repositories.GenreRepo;
 import com.groovegather.back.repositories.UserRepo;
+import com.groovegather.back.services.UserService;
 
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final UserRepo userRepo;
+    private GenreRepo genreRepo;
 
     public UserController(UserRepo userRepo) {
         this.userRepo = userRepo;
+        this.genreRepo = genreRepo;
     }
 
     @GetMapping("")
@@ -30,15 +35,13 @@ public class UserController {
         return this.userRepo.findAll();
     }
 
-    @PostMapping("")
-    public ResponseEntity<?> save(@RequestBody UserEntity user) {
-        try {
-            System.out.println(user);
-            this.userRepo.save(user);
-            return ResponseEntity.ok(user);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
-        }
+    @Autowired
+    private UserService userService;
+
+    @PostMapping
+    public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity userEntity) {
+        UserEntity createdUser = userService.createUser(userEntity);
+        return ResponseEntity.ok(createdUser);
     }
 
     @PutMapping("/{id}")
