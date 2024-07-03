@@ -6,7 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.groovegather.back.dto.project.PostProject;
+import com.groovegather.back.dtos.project.GetProject;
+import com.groovegather.back.dtos.project.PostProject;
 import com.groovegather.back.entities.GenreEntity;
 import com.groovegather.back.entities.ProjectEntity;
 import com.groovegather.back.repositories.GenreRepo;
@@ -42,11 +43,7 @@ public class ProjectService {
         return projectDtoMapper.toProjectPostDto(projectEntity);
     }
 
-    public List<PostProject> createProjects(List<PostProject> projectPostDtos) {
-        List<PostProject> createdProjects = new ArrayList<>();
-        for (PostProject projectPostDto : projectPostDtos) {
-            createdProjects.add(createProject(projectPostDto));
-        }
-        return createdProjects;
+    public List<GetProject> getAll() {
+        return projectDtoMapper.toGetProjectsDto(projectRepo.findAll());
     }
 }

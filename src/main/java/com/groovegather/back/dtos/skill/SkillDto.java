@@ -1,4 +1,4 @@
-package com.groovegather.back.dto.skill;
+package com.groovegather.back.dtos.skill;
 
 import lombok.Data;
 
