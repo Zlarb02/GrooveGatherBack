@@ -1,11 +1,11 @@
-package com.groovegather.back.dto.project;
+package com.groovegather.back.dtos.project;
 
 import java.util.List;
 
 import lombok.Data;
 
 @Data
-public class PostProject {
+public class GetProject {
     private String name;
     private String description;
     private String color;

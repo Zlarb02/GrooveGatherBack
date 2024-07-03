@@ -1,5 +1,6 @@
 package com.groovegather.back.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.groovegather.back.dto.project.PostProject;
+import com.groovegather.back.dtos.project.GetProject;
+import com.groovegather.back.dtos.project.PostProject;
 import com.groovegather.back.entities.ProjectEntity;
 import com.groovegather.back.repositories.ProjectRepo;
 import com.groovegather.back.services.ProjectService;
@@ -30,8 +32,8 @@ public class ProjectController {
     private ProjectService projectService;
 
     @GetMapping("")
-    public Iterable<ProjectEntity> getAll() {
-        return this.projectRepo.findAll();
+    public ResponseEntity<List<GetProject>> getAll() {
+        return ResponseEntity.ok(projectService.getAll());
     }
 
     @GetMapping("/{id}")

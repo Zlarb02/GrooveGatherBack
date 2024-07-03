@@ -7,7 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.groovegather.back.dto.project.PostProject;
+import com.groovegather.back.dtos.project.GetProject;
+import com.groovegather.back.dtos.project.PostProject;
 import com.groovegather.back.entities.GenreEntity;
 import com.groovegather.back.entities.ProjectEntity;
 import com.groovegather.back.entities.ProjectSkillEntity;
@@ -99,6 +100,38 @@ public class ProjectDtoMapper {
                 .collect(Collectors.toList()));
 
         return projectPostDto;
+    }
+
+    public List<GetProject> toGetProjectsDto(List<ProjectEntity> projectEntities) {
+
+        List<GetProject> getProjectsDto = new ArrayList<>();
+
+        for (ProjectEntity projectEntity : projectEntities) {
+            GetProject projectGetDto = new GetProject();
+            projectGetDto.setName(projectEntity.getName());
+            projectGetDto.setDescription(projectEntity.getDescription());
+            projectGetDto.setColor(projectEntity.getColor());
+            projectGetDto.setLikes(projectEntity.getLikes());
+
+            projectGetDto.setGenres(projectEntity.getGenres().stream()
+                    .map(GenreEntity::getName)
+                    .collect(Collectors.toList()));
+
+            projectGetDto.setSkillsPresent(projectEntity.getProjectSkills().stream()
+                    .filter(projectSkill -> !projectSkill.getIsMissing())
+                    .map(projectSkill -> projectSkill.getSkill().getName())
+                    .collect(Collectors.toList()));
+
+            projectGetDto.setSkillsMissing(projectEntity.getProjectSkills().stream()
+                    .filter(ProjectSkillEntity::getIsMissing)
+                    .map(projectSkill -> projectSkill.getSkill().getName())
+                    .collect(Collectors.toList()));
+
+            getProjectsDto.add(projectGetDto);
+
+        }
+
+        return getProjectsDto;
     }
 
 }

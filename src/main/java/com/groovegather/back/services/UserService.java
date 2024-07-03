@@ -3,7 +3,7 @@ package com.groovegather.back.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.groovegather.back.dto.user.UserPostDto;
+import com.groovegather.back.dtos.user.UserPostDto;
 import com.groovegather.back.entities.UserEntity;
 import com.groovegather.back.repositories.UserRepo;
 import com.groovegather.back.services.dtos.UserDtoMapper;

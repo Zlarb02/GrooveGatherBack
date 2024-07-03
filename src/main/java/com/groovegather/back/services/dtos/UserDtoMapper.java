@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.groovegather.back.dto.user.UserPostDto;
+import com.groovegather.back.dtos.user.UserPostDto;
 import com.groovegather.back.entities.GenreEntity;
 import com.groovegather.back.entities.UserEntity;
 import com.groovegather.back.repositories.GenreRepo;

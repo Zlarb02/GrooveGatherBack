@@ -1,4 +1,4 @@
-package com.groovegather.back.dto.user;
+package com.groovegather.back.dtos.user;
 
 import java.util.List;
 

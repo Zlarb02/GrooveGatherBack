@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.groovegather.back.dto.user.UserPostDto;
+import com.groovegather.back.dtos.user.UserPostDto;
 import com.groovegather.back.entities.UserEntity;
 import com.groovegather.back.repositories.GenreRepo;
 import com.groovegather.back.repositories.UserRepo;
