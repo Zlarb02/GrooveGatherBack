@@ -1,7 +1,8 @@
-package com.groovegather.back.services.dto;
+package com.groovegather.back.services.dtos;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,5 +43,25 @@ public class UserDtoMapper {
         userEntity.setGenres(genres);
 
         return userEntity;
+    }
+
+    public UserPostDto toUserDto(UserEntity userEntity) {
+        UserPostDto userPostDto = new UserPostDto();
+        userPostDto.setName(userEntity.getName());
+        userPostDto.setPassword(userEntity.getPassword());
+        userPostDto.setEmail(userEntity.getEmail());
+        userPostDto.setPicture(userEntity.getPicture());
+        userPostDto.setToken(userEntity.getToken());
+        userPostDto.setDescription(userEntity.getDescription());
+        userPostDto.setRole(userEntity.getRole());
+        userPostDto.setSubscriptionLevel(userEntity.getSubscriptionLevel());
+
+        // Map genres from UserEntity to UserPostDto
+        List<String> genres = userEntity.getGenres().stream()
+                .map(GenreEntity::getName)
+                .collect(Collectors.toList());
+        userPostDto.setGenres(genres);
+
+        return userPostDto;
     }
 }

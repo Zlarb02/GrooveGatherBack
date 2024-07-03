@@ -54,4 +54,7 @@ public class ProjectEntity {
 
     @OneToMany(mappedBy = "project", cascade = { CascadeType.ALL })
     private List<ManageEntity> projectManageFiles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProjectSkillEntity> projectSkills;
 }

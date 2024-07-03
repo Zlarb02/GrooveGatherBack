@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.groovegather.back.dto.project.ProjectPostDto;
+import com.groovegather.back.dto.project.PostProject;
 import com.groovegather.back.entities.ProjectEntity;
 import com.groovegather.back.repositories.ProjectRepo;
 import com.groovegather.back.services.ProjectService;
@@ -22,11 +22,12 @@ import com.groovegather.back.services.ProjectService;
 @RestController
 @RequestMapping("/api/v1/projects")
 public class ProjectController {
-    private final ProjectRepo projectRepo;
 
-    public ProjectController(ProjectRepo projectRepo) {
-        this.projectRepo = projectRepo;
-    }
+    @Autowired
+    private ProjectRepo projectRepo;
+
+    @Autowired
+    private ProjectService projectService;
 
     @GetMapping("")
     public Iterable<ProjectEntity> getAll() {
@@ -38,12 +39,9 @@ public class ProjectController {
         return this.projectRepo.findById(id);
     }
 
-    @Autowired
-    private ProjectService projectService;
-
     @PostMapping
-    public ResponseEntity<ProjectEntity> createProject(@RequestBody ProjectPostDto projectPostDto) {
-        ProjectEntity createdProject = projectService.createProject(projectPostDto);
+    public ResponseEntity<PostProject> createProject(@RequestBody PostProject projectPostDto) {
+        PostProject createdProject = projectService.createProject(projectPostDto);
         return ResponseEntity.ok(createdProject);
     }
 
