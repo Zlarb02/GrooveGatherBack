@@ -1,11 +1,10 @@
-package com.groovegather.back.dto.project;
+package com.groovegather.back.dto.skill;
 
 import lombok.Data;
 
 @Data
 public class SkillDto {
     private String name;
-    private Boolean isMissing;
 
     public SkillDto(String name) {
         this.name = name;

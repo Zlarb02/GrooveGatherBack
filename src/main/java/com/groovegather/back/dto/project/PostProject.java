@@ -5,12 +5,12 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class ProjectPostDto {
+public class PostProject {
     private String name;
     private String description;
     private String color;
-    private String likes;
+    private Integer likes;
     private List<String> genres;
-    private List<SkillDto> skillsPresent;
-    private List<SkillDto> skillsMissing;
+    private List<String> skillsPresent;
+    private List<String> skillsMissing;
 }

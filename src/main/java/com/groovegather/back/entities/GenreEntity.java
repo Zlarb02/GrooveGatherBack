@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class GenreEntity {
 
     @Id
-    @Column(name = "genre_name")
+    @Column(name = "name")
     private String name;
 
     @JsonIgnore
