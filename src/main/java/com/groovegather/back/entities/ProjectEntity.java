@@ -52,9 +52,9 @@ public class ProjectEntity {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<OperateEntity> userProjectOperations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "project", cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "project", cascade = { CascadeType.MERGE, CascadeType.REFRESH })
     private List<ManageEntity> projectManageFiles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = { CascadeType.MERGE, CascadeType.REFRESH }, orphanRemoval = true)
     private List<ProjectSkillEntity> projectSkills;
 }
