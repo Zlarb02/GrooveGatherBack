@@ -6,6 +6,7 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -42,19 +43,29 @@ public class ProjectEntity {
     private Integer likes = 0;
 
     @ManyToMany
-    @JoinTable(name = "project_skill", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "skill_name"))
-    private List<SkillEntity> skills = new ArrayList<>();
-
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "project_genre", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "genre_name"))
     private List<GenreEntity> genres = new ArrayList<>();
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "project")
     private List<OperateEntity> userProjectOperations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "project", cascade = { CascadeType.MERGE, CascadeType.REFRESH })
+    @OneToMany(mappedBy = "project", orphanRemoval = true)
     private List<ManageEntity> projectManageFiles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "project", cascade = { CascadeType.MERGE, CascadeType.REFRESH }, orphanRemoval = true)
-    private List<ProjectSkillEntity> projectSkills;
+    @OneToMany(mappedBy = "project", cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<ProjectSkillEntity> projectSkills = new ArrayList<>();
+
+    public ProjectEntity(Object id, String name, String description, String color, int likes,
+            ArrayList<GenreEntity> genres, ArrayList<OperateEntity> userProjectOperations,
+            ArrayList<ManageEntity> projectManageFiles, ArrayList<ProjectSkillEntity> projectSkills) {
+        this.id = (Long) id;
+        this.name = name;
+        this.description = description;
+        this.color = color;
+        this.likes = likes;
+        this.genres = genres;
+        this.userProjectOperations = userProjectOperations;
+        this.projectManageFiles = projectManageFiles;
+        this.projectSkills = projectSkills;
+    }
 }

@@ -32,7 +32,7 @@ public class UserDtoMapper {
         // Example of mapping genres (assuming genre names are sent as strings)
         List<GenreEntity> genres = new ArrayList<>();
         for (String genreName : userPostDto.getGenres()) {
-            GenreEntity genreEntity = genreRepo.findByName(genreName);
+            GenreEntity genreEntity = genreRepo.findByName(genreName).get();
             if (genreEntity == null) {
                 genreEntity = new GenreEntity(genreName);
                 genreEntity = genreRepo.save(genreEntity);
