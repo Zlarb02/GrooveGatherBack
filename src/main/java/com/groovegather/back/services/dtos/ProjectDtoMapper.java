@@ -115,6 +115,7 @@ public class ProjectDtoMapper {
         projectPostDto.setDescription(projectEntity.getDescription());
         projectPostDto.setColor(projectEntity.getColor());
         projectPostDto.setLikes(projectEntity.getLikes());
+        projectPostDto.setDate(projectEntity.getDate());
 
         projectPostDto.setGenres(projectEntity.getGenres().stream()
                 .map(GenreEntity::getName)
@@ -143,6 +144,7 @@ public class ProjectDtoMapper {
             projectGetDto.setDescription(projectEntity.getDescription());
             projectGetDto.setColor(projectEntity.getColor());
             projectGetDto.setLikes(projectEntity.getLikes());
+            projectGetDto.setDate(projectEntity.getDate());
 
             projectGetDto.setGenres(projectEntity.getGenres().stream()
                     .map(GenreEntity::getName)

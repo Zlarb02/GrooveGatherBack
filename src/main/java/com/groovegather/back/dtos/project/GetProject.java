@@ -1,5 +1,6 @@
 package com.groovegather.back.dtos.project;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import lombok.Data;
@@ -11,6 +12,7 @@ public class GetProject {
     private String description;
     private String color;
     private Integer likes;
+    private LocalDate date;
     private List<String> genres;
     private List<String> skillsPresent;
     private List<String> skillsMissing;

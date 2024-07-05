@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Définition de l'URL de l'API
-API_URL="http://localhost:8080/api/v1/projects"  # Modifier l'URL selon votre configuration
+API_URL="https://groovegather-api.olprog-a.fr/api/v1/projects"  # Modifier l'URL selon votre configuration
 
 # Lecture du fichier JSON et découpage des objets
 while IFS= read -r project; do
