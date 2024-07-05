@@ -49,41 +49,65 @@ public class ProjectDtoMapper {
         }
         projectEntity.setGenres(genres);
 
+        // Mappage des Skills
+        List<ProjectSkillEntity> projectSkills = new ArrayList<>();
+        for (String skillPresentName : projectPostDto.getSkillsPresent()) {
+            SkillEntity skillEntity = skillRepo.findByName(skillPresentName).orElse(null);
+            if (skillEntity == null) {
+                skillEntity = new SkillEntity(skillPresentName);
+
+            }
+            ProjectSkillEntity projectSkillEntity = new ProjectSkillEntity(projectEntity, skillEntity, false);
+
+            projectSkills.add(projectSkillEntity);
+        }
+        for (String skillMissingName : projectPostDto.getSkillsMissing()) {
+            SkillEntity skillEntity = skillRepo.findByName(skillMissingName).orElse(null);
+            if (skillEntity == null) {
+                skillEntity = new SkillEntity(skillMissingName);
+            }
+            ProjectSkillEntity projectSkillEntity = new ProjectSkillEntity(projectEntity, skillEntity, true);
+
+            projectSkills.add(projectSkillEntity);
+        }
+        projectEntity.setProjectSkills(projectSkills);
+
         projectRepo.save(projectEntity);
 
-        // Mappage des skills
-        // List<ProjectSkillEntity> projectSkills = new ArrayList<>();
-        // projectSkills.addAll(mapSkills(projectPostDto.getSkillsPresent(),
-        // projectEntity, false));
-        // projectSkills.addAll(mapSkills(projectPostDto.getSkillsMissing(),
-        // projectEntity, true));
-        // projectEntity.setProjectSkills(projectSkills);
-
         return projectEntity;
-    }
 
-    private List<SkillEntity> mapSkills(List<String> skillNames, ProjectEntity projectEntity,
-            boolean isMissing) {
-        List<SkillEntity> skills = new ArrayList<>();
-        if (skillNames != null) {
-            for (String skillName : skillNames) {
-                SkillEntity skillEntity = skillRepo.findByName(skillName).orElse(null);
-                if (skillEntity == null) {
-                    skillEntity = new SkillEntity(skillName);
-                    skillEntity.setName(skillName);
-                    skillRepo.save(skillEntity);
-                }
-
-                skills.add(skillEntity);
-                // ProjectSkillEntity projectSkill = new ProjectSkillEntity();
-                // projectSkill.setProject(projectEntity);
-                // projectSkill.setSkill(skillEntity);
-                // projectSkill.setIsMissing(isMissing);
-                // projectSkills.add(projectSkill);
-            }
-        }
-        return skills;
     }
+    // Mappage des skills
+    // List<ProjectSkillEntity> projectSkills = new ArrayList<>();
+    // projectSkills.addAll(mapSkills(projectPostDto.getSkillsPresent(),
+    // projectEntity, false));
+    // projectSkills.addAll(mapSkills(projectPostDto.getSkillsMissing(),
+    // projectEntity, true));
+    // projectEntity.setProjectSkills(projectSkills);
+
+    // private List<SkillEntity> mapSkills(List<String> skillNames, ProjectEntity
+    // projectEntity,
+    // boolean isMissing) {
+    // List<SkillEntity> skills = new ArrayList<>();
+    // if (skillNames != null) {
+    // for (String skillName : skillNames) {
+    // SkillEntity skillEntity = skillRepo.findByName(skillName).orElse(null);
+    // if (skillEntity == null) {
+    // skillEntity = new SkillEntity(skillName);
+    // skillEntity.setName(skillName);
+    // skillRepo.save(skillEntity);
+    // }
+
+    // skills.add(skillEntity);
+    // ProjectSkillEntity projectSkill = new ProjectSkillEntity();
+    // projectSkill.setProject(projectEntity);
+    // projectSkill.setSkill(skillEntity);
+    // projectSkill.setIsMissing(isMissing);
+    // projectSkills.add(projectSkill);
+    // }
+    // }
+    // return skills;
+    // }
 
     public PostProject toProjectPostDto(ProjectEntity projectEntity) {
         PostProject projectPostDto = new PostProject();
