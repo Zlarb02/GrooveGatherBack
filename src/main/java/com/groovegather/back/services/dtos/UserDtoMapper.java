@@ -1,12 +1,13 @@
 package com.groovegather.back.services.dtos;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.groovegather.back.dtos.user.GetUser;
 import com.groovegather.back.dtos.user.UserPostDto;
 import com.groovegather.back.entities.GenreEntity;
 import com.groovegather.back.entities.UserEntity;
@@ -20,48 +21,91 @@ public class UserDtoMapper {
 
     public UserEntity toUserEntity(UserPostDto userPostDto) {
         UserEntity userEntity = new UserEntity();
-        userEntity.setName(userPostDto.getName());
+        if (userPostDto.getName() != null) {
+            userEntity.setName(userPostDto.getName());
+        } else {
+            userEntity.setName(userPostDto.getEmail());
+        }
         userEntity.setPassword(userPostDto.getPassword());
+        userEntity.setRepeatedPassword(userPostDto.getRepeatedPassword());
         userEntity.setEmail(userPostDto.getEmail());
-        userEntity.setPicture(userPostDto.getPicture());
+        if (userPostDto.getPicture() != null) {
+            userEntity.setPicture(userPostDto.getPicture());
+        } else {
+            userEntity.setPicture("https://www.picsum.photos/150/150");
+        }
         userEntity.setToken(userPostDto.getToken());
-        userEntity.setDescription(userPostDto.getDescription());
-        userEntity.setRole(userPostDto.getRole());
-        userEntity.setSubscriptionLevel(userPostDto.getSubscriptionLevel());
+        if (userPostDto.getDescription() != null) {
+            userEntity.setDescription(userPostDto.getDescription());
+        } else {
+            userEntity.setDescription("No description");
+        }
+        if (userPostDto.getRole() != null) {
+            userEntity.setRole(userPostDto.getRole());
+        } else {
+            userEntity.setRole(0);
+        }
+        if (userPostDto.getSubscriptionLevel() != null) {
+            userEntity.setSubscriptionLevel(userPostDto.getSubscriptionLevel());
+        } else {
+            userEntity.setSubscriptionLevel(0);
+        }
 
         // Example of mapping genres (assuming genre names are sent as strings)
-        List<GenreEntity> genres = new ArrayList<>();
-        for (String genreName : userPostDto.getGenres()) {
-            GenreEntity genreEntity = genreRepo.findByName(genreName).get();
-            if (genreEntity == null) {
-                genreEntity = new GenreEntity(genreName);
-                genreEntity = genreRepo.save(genreEntity);
+        if ((userPostDto.getGenres() != null))
+
+        {
+            Collection<GenreEntity> genres = new ArrayList<>();
+            for (String genreName : userPostDto.getGenres()) {
+                GenreEntity genreEntity = genreRepo.findByName(genreName).orElse(null);
+                if (genreEntity == null) {
+                    genreEntity = new GenreEntity(genreName);
+                    genreEntity = genreRepo.save(genreEntity);
+                }
+
+                genres.add(genreEntity);
             }
-
-            genres.add(genreEntity);
+            userEntity.setGenres(genres);
         }
-        userEntity.setGenres(genres);
-
         return userEntity;
+
     }
 
     public UserPostDto toUserDto(UserEntity userEntity) {
-        UserPostDto userPostDto = new UserPostDto();
-        userPostDto.setName(userEntity.getName());
-        userPostDto.setPassword(userEntity.getPassword());
-        userPostDto.setEmail(userEntity.getEmail());
-        userPostDto.setPicture(userEntity.getPicture());
-        userPostDto.setToken(userEntity.getToken());
-        userPostDto.setDescription(userEntity.getDescription());
-        userPostDto.setRole(userEntity.getRole());
-        userPostDto.setSubscriptionLevel(userEntity.getSubscriptionLevel());
-
-        // Map genres from UserEntity to UserPostDto
-        List<String> genres = userEntity.getGenres().stream()
+        UserPostDto userGetDto = new UserPostDto();
+        userGetDto.setName(userEntity.getName());
+        userGetDto.setPassword(userEntity.getPassword());
+        userGetDto.setEmail(userEntity.getEmail());
+        userGetDto.setPicture(userEntity.getPicture());
+        userGetDto.setToken(userEntity.getToken());
+        userGetDto.setDescription(userEntity.getDescription());
+        userGetDto.setRole(userEntity.getRole());
+        userGetDto.setSubscriptionLevel(userEntity.getSubscriptionLevel());
+        userGetDto.setGenres(userEntity.getGenres().stream()
                 .map(GenreEntity::getName)
-                .collect(Collectors.toList());
-        userPostDto.setGenres(genres);
+                .collect(Collectors.toList()));
 
-        return userPostDto;
+        return userGetDto;
+    }
+
+    public Collection<GetUser> toUsersDtos(Collection<UserEntity> userEntities) {
+        Collection<GetUser> userGetDtos = new ArrayList<>();
+        for (UserEntity userEntity : userEntities) {
+            GetUser userGetDto = new GetUser();
+            userGetDto.setName(userEntity.getName());
+            userGetDto.setPassword(userEntity.getPassword());
+            userGetDto.setEmail(userEntity.getEmail());
+            userGetDto.setPicture(userEntity.getPicture());
+            userGetDto.setToken(userEntity.getToken());
+            userGetDto.setDescription(userEntity.getDescription());
+            userGetDto.setRole(userEntity.getRole());
+            userGetDto.setSubscriptionLevel(userEntity.getSubscriptionLevel());
+            userGetDto.setGenres(userEntity.getGenres().stream()
+                    .map(GenreEntity::getName)
+                    .collect(Collectors.toList()));
+            userGetDtos.add(userGetDto);
+        }
+
+        return userGetDtos;
     }
 }

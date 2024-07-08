@@ -1,6 +1,6 @@
 package com.groovegather.back.entities;
 
-import java.util.List;
+import java.util.Collection;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -27,11 +27,11 @@ public class GenreEntity {
 
     @JsonIgnore
     @ManyToMany(mappedBy = "genres")
-    private List<UserEntity> users;
+    private Collection<UserEntity> users;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "genres")
-    private List<ProjectEntity> projects;
+    private Collection<ProjectEntity> projects;
 
     public GenreEntity(String name) {
         this.name = name;

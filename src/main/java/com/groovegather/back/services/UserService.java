@@ -1,8 +1,11 @@
 package com.groovegather.back.services;
 
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.groovegather.back.dtos.user.GetUser;
 import com.groovegather.back.dtos.user.UserPostDto;
 import com.groovegather.back.entities.UserEntity;
 import com.groovegather.back.repositories.UserRepo;
@@ -20,8 +23,18 @@ public class UserService {
     public UserPostDto createUser(UserPostDto userPostDto) {
         UserEntity userEntity = userDtoMapper.toUserEntity(userPostDto);
 
-        // You can handle genre mapping and saving here
+        if (userEntity.getPassword() == userEntity.getRepeatedPassword()) {
+            userRepo.save(userEntity);
+            return userDtoMapper.toUserDto(userEntity);
+        } else {
+            return null;
+        }
+    }
 
-        return userDtoMapper.toUserDto(userEntity);
+    public Collection<GetUser> getAll() {
+
+        Collection<UserEntity> users = userRepo.findAll();
+
+        return userDtoMapper.toUsersDtos(users);
     }
 }
