@@ -1,7 +1,7 @@
 package com.groovegather.back.services.dtos;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class ProjectDtoMapper {
         projectEntity.setLikes(projectPostDto.getLikes() != null ? projectPostDto.getLikes() : 0);
 
         // Mappage des genres
-        List<GenreEntity> genres = new ArrayList<>();
+        Collection<GenreEntity> genres = new ArrayList<>();
         for (String genreName : projectPostDto.getGenres()) {
             GenreEntity genreEntity = genreRepo.findByName(genreName).orElse(null);
             if (genreEntity == null) {
@@ -46,7 +46,7 @@ public class ProjectDtoMapper {
         projectEntity.setGenres(genres);
 
         // Mappage des Skills
-        List<ProjectSkillEntity> projectSkills = new ArrayList<>();
+        Collection<ProjectSkillEntity> projectSkills = new ArrayList<>();
         for (String skillPresentName : projectPostDto.getSkillsPresent()) {
             SkillEntity skillEntity = skillRepo.findByName(skillPresentName).orElse(null);
             if (skillEntity == null) {
@@ -97,8 +97,8 @@ public class ProjectDtoMapper {
         return projectPostDto;
     }
 
-    public List<GetProject> toGetProjectsDto(List<ProjectEntity> projectEntities) {
-        List<GetProject> getProjectsDto = new ArrayList<>();
+    public Collection<GetProject> toGetProjectsDto(Collection<ProjectEntity> projectEntities) {
+        Collection<GetProject> getProjectsDto = new ArrayList<>();
 
         for (ProjectEntity projectEntity : projectEntities) {
             GetProject projectGetDto = new GetProject();

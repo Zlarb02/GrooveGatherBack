@@ -1,6 +1,6 @@
 package com.groovegather.back.controllers;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class ProjectController {
     private ProjectService projectService;
 
     @GetMapping("")
-    public ResponseEntity<List<GetProject>> getAll() {
+    public ResponseEntity<Collection<GetProject>> getAll() {
         return ResponseEntity.ok(projectService.getAll());
     }
 

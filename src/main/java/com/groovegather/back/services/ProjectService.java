@@ -1,6 +1,6 @@
 package com.groovegather.back.services;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,8 +30,8 @@ public class ProjectService {
         return projectDtoMapper.toProjectPostDto(projectEntity);
     }
 
-    public List<GetProject> getAll() {
-        List<ProjectEntity> projectEntities = projectRepo.findAll();
+    public Collection<GetProject> getAll() {
+        Collection<ProjectEntity> projectEntities = projectRepo.findAll();
         return projectDtoMapper.toGetProjectsDto(projectEntities);
     }
 }

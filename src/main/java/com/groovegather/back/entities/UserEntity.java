@@ -2,11 +2,11 @@ package com.groovegather.back.entities;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,7 +32,7 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 200)
+    @Column(length = 200)
     private String name;
 
     @Column(nullable = false, length = 200)
@@ -51,7 +51,7 @@ public class UserEntity {
     @Column(nullable = false, length = 2000)
     private String token;
 
-    @Column(nullable = false, length = 2000)
+    @Column(length = 2000)
     private String description;
 
     @Column(nullable = false)
@@ -64,7 +64,7 @@ public class UserEntity {
     @JoinTable(name = "user_genre", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "genre_name"))
     private Collection<GenreEntity> genres = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<OperateEntity> userProjectOperations = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Collection<OperateEntity> userProjectOperations = new ArrayList<>();
 
 }

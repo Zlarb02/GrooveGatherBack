@@ -1,6 +1,6 @@
 package com.groovegather.back.entities;
 
-import java.util.List;
+import java.util.Collection;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -23,7 +23,7 @@ public class SkillEntity {
     private String name;
 
     @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProjectSkillEntity> projectSkills;
+    private Collection<ProjectSkillEntity> projectSkills;
 
     public SkillEntity(String name) {
         this.name = name;

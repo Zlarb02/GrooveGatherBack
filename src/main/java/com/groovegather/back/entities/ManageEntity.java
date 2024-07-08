@@ -4,9 +4,10 @@ import java.sql.Timestamp;
 
 import org.springframework.data.annotation.LastModifiedDate;
 
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,13 +21,17 @@ import lombok.NoArgsConstructor;
 @Table(name = "manage")
 public class ManageEntity {
 
+    @EmbeddedId
+    private ManageId id;
+
     @ManyToOne
+    @MapsId("projectId")
     private ProjectEntity project;
 
     @ManyToOne
+    @MapsId("fileId")
     private FileEntity file;
 
-    @Id
     @LastModifiedDate
     private Timestamp timestamp;
 
