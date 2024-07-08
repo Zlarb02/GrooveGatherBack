@@ -26,7 +26,7 @@ public class ProjectService {
 
     public PostProject createProject(PostProject projectPostDto) {
         ProjectEntity projectEntity = projectDtoMapper.toProjectEntity(projectPostDto);
-        projectEntity = projectRepo.save(projectEntity);
+        projectRepo.save(projectEntity);
         return projectDtoMapper.toProjectPostDto(projectEntity);
     }
 
