@@ -21,6 +21,7 @@ public class UserDtoMapper {
 
     public UserEntity toUserEntity(UserPostDto userPostDto) {
         UserEntity userEntity = new UserEntity();
+        userEntity.setIsGoogle(userPostDto.getIsGoogle());
         if (userPostDto.getName() != null) {
             userEntity.setName(userPostDto.getName());
         } else {
@@ -67,6 +68,8 @@ public class UserDtoMapper {
             }
             userEntity.setGenres(genres);
         }
+
+        userEntity.setToken(" ");
         return userEntity;
 
     }
@@ -74,7 +77,8 @@ public class UserDtoMapper {
     public UserPostDto toUserDto(UserEntity userEntity) {
         UserPostDto userGetDto = new UserPostDto();
         userGetDto.setName(userEntity.getName());
-        userGetDto.setPassword(userEntity.getPassword());
+        userGetDto.setPassword("ok");
+        userGetDto.setRepeatedPassword("ok");
         userGetDto.setEmail(userEntity.getEmail());
         userGetDto.setPicture(userEntity.getPicture());
         userGetDto.setToken(userEntity.getToken());

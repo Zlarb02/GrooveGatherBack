@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.groovegather.back.dtos.user.GetUser;
 import com.groovegather.back.dtos.user.UserPostDto;
 import com.groovegather.back.entities.UserEntity;
+import com.groovegather.back.errors.PasswordMismatchException;
 import com.groovegather.back.repositories.GenreRepo;
 import com.groovegather.back.repositories.UserRepo;
 import com.groovegather.back.services.UserService;
@@ -37,17 +39,35 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<Collection<GetUser>> getAll() {
         Collection<GetUser> users = UserController.userService.getAll();
-
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/google")
+    public ResponseEntity<UserPostDto> getGoogleUserByEmail(
+            @RequestParam(value = "email") String email) {
+        try {
+            UserPostDto user = UserController.userService.getGoogleUserByEmail(email);
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
     @PostMapping
-    public ResponseEntity<UserPostDto> createUser(@RequestBody UserPostDto userPostDto) {
-        UserPostDto createdUser = userService.createUser(userPostDto);
-        return ResponseEntity.ok(createdUser);
+    public ResponseEntity<UserPostDto> createUser(@RequestBody UserPostDto userPostDto,
+            @RequestParam(value = "isGoogle", defaultValue = "false") boolean isGoogle) {
+        try {
+            userPostDto.setIsGoogle(isGoogle);
+            UserPostDto createdUser = userService.createUser(userPostDto);
+            return ResponseEntity.ok(createdUser);
+        } catch (PasswordMismatchException e) {
+            throw new PasswordMismatchException(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PutMapping("/{id}")

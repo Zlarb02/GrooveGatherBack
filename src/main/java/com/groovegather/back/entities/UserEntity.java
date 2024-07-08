@@ -60,6 +60,9 @@ public class UserEntity {
     @Column(nullable = false)
     private Integer subscriptionLevel;
 
+    @Column(nullable = false)
+    private Boolean isGoogle;
+
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "user_genre", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "genre_name"))
     private Collection<GenreEntity> genres = new ArrayList<>();

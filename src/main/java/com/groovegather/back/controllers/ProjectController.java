@@ -40,6 +40,7 @@ public class ProjectController {
 
     @GetMapping("/{id}")
     public Optional<ProjectEntity> getById(@PathVariable Long id) {
+        System.out.println("hello there");
         return this.projectRepo.findById(id);
     }
 
