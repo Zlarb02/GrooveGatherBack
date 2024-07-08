@@ -34,4 +34,8 @@ public class ProjectService {
         Collection<ProjectEntity> projectEntities = projectRepo.findAll();
         return projectDtoMapper.toGetProjectsDto(projectEntities);
     }
+    public PostProject getById(Long id){
+        ProjectEntity projectEntity = projectRepo.findById(id).get();
+        return projectDtoMapper.toProjectPostDto(projectEntity);
+    }
 }
