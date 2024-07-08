@@ -33,15 +33,14 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<Collection<GetProject>> getAll() {
         return ResponseEntity.ok(projectService.getAll());
     }
 
     @GetMapping("/{id}")
-    public Optional<ProjectEntity> getById(@PathVariable Long id) {
-        System.out.println("hello there");
-        return this.projectRepo.findById(id);
+    public ResponseEntity<PostProject> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(this.projectService.getById(id));
     }
 
     @PostMapping
