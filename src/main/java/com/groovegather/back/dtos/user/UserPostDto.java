@@ -16,4 +16,5 @@ public class UserPostDto {
     private Integer role;
     private Integer subscriptionLevel;
     private Collection<String> genres; // Assuming genre names are sent as strings
+    private Boolean isGoogle;
 }
