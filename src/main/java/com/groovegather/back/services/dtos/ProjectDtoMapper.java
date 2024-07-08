@@ -14,7 +14,6 @@ import com.groovegather.back.entities.ProjectEntity;
 import com.groovegather.back.entities.ProjectSkillEntity;
 import com.groovegather.back.entities.SkillEntity;
 import com.groovegather.back.repositories.GenreRepo;
-import com.groovegather.back.repositories.ProjectRepo;
 import com.groovegather.back.repositories.SkillRepo;
 
 @Component
@@ -25,9 +24,6 @@ public class ProjectDtoMapper {
 
     @Autowired
     private SkillRepo skillRepo;
-
-    @Autowired
-    private ProjectRepo projectRepo;
 
     public ProjectEntity toProjectEntity(PostProject projectPostDto) {
         ProjectEntity projectEntity = new ProjectEntity();
@@ -72,42 +68,9 @@ public class ProjectDtoMapper {
         }
         projectEntity.setProjectSkills(projectSkills);
 
-        projectRepo.save(projectEntity);
-
         return projectEntity;
 
     }
-    // Mappage des skills
-    // List<ProjectSkillEntity> projectSkills = new ArrayList<>();
-    // projectSkills.addAll(mapSkills(projectPostDto.getSkillsPresent(),
-    // projectEntity, false));
-    // projectSkills.addAll(mapSkills(projectPostDto.getSkillsMissing(),
-    // projectEntity, true));
-    // projectEntity.setProjectSkills(projectSkills);
-
-    // private List<SkillEntity> mapSkills(List<String> skillNames, ProjectEntity
-    // projectEntity,
-    // boolean isMissing) {
-    // List<SkillEntity> skills = new ArrayList<>();
-    // if (skillNames != null) {
-    // for (String skillName : skillNames) {
-    // SkillEntity skillEntity = skillRepo.findByName(skillName).orElse(null);
-    // if (skillEntity == null) {
-    // skillEntity = new SkillEntity(skillName);
-    // skillEntity.setName(skillName);
-    // skillRepo.save(skillEntity);
-    // }
-
-    // skills.add(skillEntity);
-    // ProjectSkillEntity projectSkill = new ProjectSkillEntity();
-    // projectSkill.setProject(projectEntity);
-    // projectSkill.setSkill(skillEntity);
-    // projectSkill.setIsMissing(isMissing);
-    // projectSkills.add(projectSkill);
-    // }
-    // }
-    // return skills;
-    // }
 
     public PostProject toProjectPostDto(ProjectEntity projectEntity) {
         PostProject projectPostDto = new PostProject();
