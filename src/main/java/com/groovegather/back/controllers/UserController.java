@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.groovegather.back.dtos.user.GetUser;
 import com.groovegather.back.dtos.user.UserPostDto;
 import com.groovegather.back.entities.UserEntity;
-import com.groovegather.back.errors.PasswordMismatchException;
+import com.groovegather.back.errors.LoginException;
 import com.groovegather.back.repositories.GenreRepo;
 import com.groovegather.back.repositories.UserRepo;
 import com.groovegather.back.services.UserService;
@@ -60,13 +60,21 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserPostDto> createUser(@RequestBody UserPostDto userPostDto,
-            @RequestParam(value = "isGoogle", defaultValue = "false") boolean isGoogle) {
+            @RequestParam(value = "isGoogle", defaultValue = "false") boolean isGoogle,
+            @RequestParam(value = "isLogin", defaultValue = "false") boolean isLogin) {
         try {
             userPostDto.setIsGoogle(isGoogle);
-            UserPostDto createdUser = userService.createUser(userPostDto);
-            return ResponseEntity.ok(createdUser);
-        } catch (PasswordMismatchException e) {
-            throw new PasswordMismatchException(e.getMessage());
+            if (isLogin == true) {
+                UserPostDto logUser = userService.logUser(userPostDto, isLogin);
+                return ResponseEntity.ok(logUser);
+            } else {
+                UserPostDto createdUser = userService.createUser(userPostDto);
+                return ResponseEntity.ok(createdUser);
+            }
+        } catch (
+
+        LoginException e) {
+            throw new LoginException(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

@@ -96,6 +96,7 @@ public class UserDtoMapper {
         Collection<GetUser> userGetDtos = new ArrayList<>();
         for (UserEntity userEntity : userEntities) {
             GetUser userGetDto = new GetUser();
+            userGetDto.setId(userEntity.getId());
             userGetDto.setName(userEntity.getName());
             userGetDto.setPassword(userEntity.getPassword());
             userGetDto.setEmail(userEntity.getEmail());
@@ -104,6 +105,7 @@ public class UserDtoMapper {
             userGetDto.setDescription(userEntity.getDescription());
             userGetDto.setRole(userEntity.getRole());
             userGetDto.setSubscriptionLevel(userEntity.getSubscriptionLevel());
+            userGetDto.setIsGoogle(userEntity.getIsGoogle());
             userGetDto.setGenres(userEntity.getGenres().stream()
                     .map(GenreEntity::getName)
                     .collect(Collectors.toList()));

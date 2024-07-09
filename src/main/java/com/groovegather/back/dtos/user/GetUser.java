@@ -16,5 +16,5 @@ public class GetUser {
         Integer role;
         Integer subscriptionLevel;
         Collection<String> genres;// Assuming genre names are sent as strings
-
+        Boolean isGoogle;
 }
