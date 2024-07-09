@@ -22,7 +22,7 @@ public class UserDtoMapper {
     public UserEntity toUserEntity(UserPostDto userPostDto) {
         UserEntity userEntity = new UserEntity();
         userEntity.setIsGoogle(userPostDto.getIsGoogle());
-        if (userPostDto.getName() != null) {
+        if (userPostDto.getName() != null && !userPostDto.getName().equals("")) {
             userEntity.setName(userPostDto.getName());
         } else {
             userEntity.setName(userPostDto.getEmail());
