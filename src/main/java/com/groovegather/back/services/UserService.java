@@ -23,6 +23,8 @@ public class UserService {
     private UserDtoMapper userDtoMapper; // Mapper class for UserEntity and UserPostDto
 
     public UserPostDto createUser(UserPostDto userPostDto) throws LoginException {
+        this.validatePassword(userPostDto.getPassword());
+
         UserEntity userEntity = userDtoMapper.toUserEntity(userPostDto);
 
         Boolean userIsAlreadyExist = isUserAlreadyExistAndNotGoogle(userPostDto);
@@ -80,5 +82,13 @@ public class UserService {
     public boolean isUserAlreadyExistAndGoogle(UserPostDto userPostDto) {
         Optional<UserEntity> user = userRepo.findByEmailAndIsGoogleTrue(userPostDto.getEmail());
         return user.isPresent();
+    }
+
+    private void validatePassword(String password) throws LoginException {
+        if (password == null || password.length() < 8 || !password.matches(".*\\d.*") || !password.matches(".*[A-Z].*")
+                || !password.matches(".*[a-z].*") || !password.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
+            throw new LoginException(
+                    "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.");
+        }
     }
 }
