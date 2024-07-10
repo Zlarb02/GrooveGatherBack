@@ -3,6 +3,8 @@ package com.groovegather.back.entities;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,6 +27,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 @Entity
+@DynamicUpdate
 @Table(name = "user")
 public class UserEntity {
 

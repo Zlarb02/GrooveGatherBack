@@ -5,7 +5,7 @@ import java.util.Collection;
 import lombok.Data;
 
 @Data
-public class GetUser {
+public class GetUserDto {
         Long id;
         String name;
         String password;

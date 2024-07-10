@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -29,6 +30,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 @Entity
+@DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "project")
 public class ProjectEntity {
