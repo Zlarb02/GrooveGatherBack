@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.groovegather.back.dtos.user.GetUser;
-import com.groovegather.back.dtos.user.UserPostDto;
+import com.groovegather.back.dtos.user.GetUserDto;
+import com.groovegather.back.dtos.user.UserDto;
 import com.groovegather.back.entities.GenreEntity;
 import com.groovegather.back.entities.UserEntity;
 import com.groovegather.back.repositories.GenreRepo;
@@ -19,7 +19,7 @@ public class UserDtoMapper {
     @Autowired
     private GenreRepo genreRepo;
 
-    public UserEntity toUserEntity(UserPostDto userPostDto) {
+    public UserEntity toUserEntity(UserDto userPostDto) {
         UserEntity userEntity = new UserEntity();
         userEntity.setIsGoogle(userPostDto.getIsGoogle());
         if (userPostDto.getName() != null && !userPostDto.getName().equals("")) {
@@ -74,8 +74,9 @@ public class UserDtoMapper {
 
     }
 
-    public UserPostDto toUserDto(UserEntity userEntity) {
-        UserPostDto userGetDto = new UserPostDto();
+    public UserDto toUserDto(UserEntity userEntity) {
+        UserDto userGetDto = new UserDto();
+        userGetDto.setId(userEntity.getId());
         userGetDto.setName(userEntity.getName());
         userGetDto.setPassword("ok");
         userGetDto.setRepeatedPassword("ok");
@@ -92,10 +93,10 @@ public class UserDtoMapper {
         return userGetDto;
     }
 
-    public Collection<GetUser> toUsersDtos(Collection<UserEntity> userEntities) {
-        Collection<GetUser> userGetDtos = new ArrayList<>();
+    public Collection<GetUserDto> toUsersDtos(Collection<UserEntity> userEntities) {
+        Collection<GetUserDto> userGetDtos = new ArrayList<>();
         for (UserEntity userEntity : userEntities) {
-            GetUser userGetDto = new GetUser();
+            GetUserDto userGetDto = new GetUserDto();
             userGetDto.setId(userEntity.getId());
             userGetDto.setName(userEntity.getName());
             userGetDto.setPassword(userEntity.getPassword());
