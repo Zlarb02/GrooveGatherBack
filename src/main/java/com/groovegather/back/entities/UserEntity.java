@@ -48,13 +48,13 @@ public class UserEntity {
     @Column(nullable = false, length = 200)
     private String email;
 
-    @Column(nullable = false, length = 2000)
+    @Column(nullable = false, length = 3000)
     private String picture;
 
-    @Column(nullable = false, length = 2000)
+    @Column(nullable = false, length = 3000)
     private String token;
 
-    @Column(length = 2000)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @Column(nullable = false)

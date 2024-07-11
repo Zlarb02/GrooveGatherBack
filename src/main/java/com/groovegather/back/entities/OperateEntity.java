@@ -4,9 +4,13 @@ import java.sql.Timestamp;
 
 import org.springframework.data.annotation.LastModifiedDate;
 
+import com.groovegather.back.enums.OperateEnum;
+import com.groovegather.back.enums.OperateRoleEnum;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
@@ -38,12 +42,14 @@ public class OperateEntity {
     private Timestamp timestamp;
 
     @Column
-    private Integer role;
+    @Enumerated(value = jakarta.persistence.EnumType.STRING)
+    private OperateRoleEnum role;
 
     @Column
-    private String operation;
+    @Enumerated(value = jakarta.persistence.EnumType.STRING)
+    private OperateEnum operation;
 
-    @Column
+    @Column(nullable = true, columnDefinition = "TEXT")
     private String operationContent;
 
 }

@@ -94,9 +94,14 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        this.userRepo.deleteById(id);
+    @DeleteMapping
+    public ResponseEntity<?> delete(@RequestParam(value = "email") String email,
+            @RequestParam(value = "isGoogle") Boolean isGoogle) {
+        if (isGoogle == true) {
+            this.userRepo.deleteByEmailAndIsGoogleTrue(email);
+        } else {
+            this.userRepo.deleteByEmailAndIsGoogleFalse(email);
+        }
         return ResponseEntity.ok().build();
     }
 }

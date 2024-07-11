@@ -1,4 +1,4 @@
-package com.groovegather.back.services.dtos;
+package com.groovegather.back.services.dtoMappers;
 
 import java.util.ArrayList;
 import java.util.Collection;

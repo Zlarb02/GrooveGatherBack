@@ -14,7 +14,7 @@ import com.groovegather.back.entities.UserEntity;
 import com.groovegather.back.errors.LoginException;
 import com.groovegather.back.repositories.GenreRepo;
 import com.groovegather.back.repositories.UserRepo;
-import com.groovegather.back.services.dtos.UserDtoMapper;
+import com.groovegather.back.services.dtoMappers.UserDtoMapper;
 
 import jakarta.transaction.Transactional;
 
