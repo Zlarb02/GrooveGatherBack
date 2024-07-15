@@ -35,7 +35,7 @@ public class SecurityConfiguration {
 				.authorizeHttpRequests(
 						request -> {
 							request
-									.requestMatchers("/api/v1/users/").permitAll()
+									.requestMatchers("/api/v1/users").permitAll()
 									.requestMatchers("/api/v1/users/register").permitAll()
 									.requestMatchers("/api/v1/users/login").permitAll()
 									.requestMatchers("/api/v1/users/user").permitAll()
