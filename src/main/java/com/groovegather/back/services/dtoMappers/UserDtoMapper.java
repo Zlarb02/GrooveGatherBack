@@ -11,6 +11,7 @@ import com.groovegather.back.dtos.user.GetUserDto;
 import com.groovegather.back.dtos.user.UserDto;
 import com.groovegather.back.entities.GenreEntity;
 import com.groovegather.back.entities.UserEntity;
+import com.groovegather.back.enums.UserRoleEnum;
 import com.groovegather.back.repositories.GenreRepo;
 
 @Component
@@ -44,7 +45,7 @@ public class UserDtoMapper {
         if (userPostDto.getRole() != null) {
             userEntity.setRole(userPostDto.getRole());
         } else {
-            userEntity.setRole(0);
+            userEntity.setRole(UserRoleEnum.USER);
         }
         if (userPostDto.getSubscriptionLevel() != null) {
             userEntity.setSubscriptionLevel(userPostDto.getSubscriptionLevel());

@@ -28,4 +28,6 @@ public interface UserRepo extends JpaRepository<UserEntity, Long> {
     @Transactional
     @Query("DELETE FROM UserEntity u WHERE u.email = :email AND u.isGoogle = true")
     void deleteByEmailAndIsGoogleTrue(@Param("email") String email);
+
+    Optional<UserEntity> findByEmail(String email);
 }

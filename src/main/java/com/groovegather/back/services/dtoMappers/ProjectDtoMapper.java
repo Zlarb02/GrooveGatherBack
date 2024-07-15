@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import com.groovegather.back.dtos.project.GetProject;
 import com.groovegather.back.dtos.project.PostProject;
 import com.groovegather.back.entities.GenreEntity;
+import com.groovegather.back.entities.ManageEntity;
+import com.groovegather.back.entities.OperateEntity;
 import com.groovegather.back.entities.ProjectEntity;
 import com.groovegather.back.entities.ProjectSkillEntity;
 import com.groovegather.back.entities.SkillEntity;
@@ -67,6 +69,14 @@ public class ProjectDtoMapper {
             projectSkills.add(projectSkillEntity);
         }
         projectEntity.setProjectSkills(projectSkills);
+
+        // mapage des fichiers
+        Collection<ManageEntity> manageEntities = new ArrayList<>();
+        // TODO : Mappage des fichiers
+
+        // mappage de l'operation create
+        Collection<OperateEntity> operateEntities = new ArrayList<>();
+        // TODO : Mappage des operations
 
         return projectEntity;
 
