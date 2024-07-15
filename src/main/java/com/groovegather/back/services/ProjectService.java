@@ -10,7 +10,7 @@ import com.groovegather.back.dtos.project.PostProject;
 import com.groovegather.back.entities.ProjectEntity;
 import com.groovegather.back.repositories.GenreRepo;
 import com.groovegather.back.repositories.ProjectRepo;
-import com.groovegather.back.services.dtos.ProjectDtoMapper;
+import com.groovegather.back.services.dtoMappers.ProjectDtoMapper;
 
 @Service
 public class ProjectService {
@@ -34,8 +34,9 @@ public class ProjectService {
         Collection<ProjectEntity> projectEntities = projectRepo.findAll();
         return projectDtoMapper.toGetProjectsDto(projectEntities);
     }
-    public PostProject getById(Long id){
-        ProjectEntity projectEntity = projectRepo.findById(id).get();
+
+    public PostProject getByName(String name) {
+        ProjectEntity projectEntity = projectRepo.findByName(name).get();
         return projectDtoMapper.toProjectPostDto(projectEntity);
     }
 }

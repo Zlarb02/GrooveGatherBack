@@ -15,4 +15,8 @@ public class PostProject {
     private List<String> genres;
     private List<String> skillsPresent;
     private List<String> skillsMissing;
+    private List<String> audioFiles;
+    private List<String> scoreFiles;
+    private List<String> archiveFiles;
+    private String previewSong;
 }

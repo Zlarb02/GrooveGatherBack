@@ -47,6 +47,9 @@ public class FileEntity {
     @Column(nullable = false)
     private Long size;
 
+    @Column(nullable = true)
+    private String convertedFileUrl; // URL du fichier converti
+
     @OneToMany(mappedBy = "file", cascade = { CascadeType.MERGE, CascadeType.REFRESH })
     private Collection<ManageEntity> projectManageFiles = new ArrayList<>();
 }
