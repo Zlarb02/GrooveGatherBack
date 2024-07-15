@@ -38,9 +38,9 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getAll());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PostProject> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(this.projectService.getById(id));
+    @GetMapping("/{name}")
+    public ResponseEntity<PostProject> getByName(@PathVariable String name) {
+        return ResponseEntity.ok(this.projectService.getByName(name));
     }
 
     @PostMapping
@@ -49,12 +49,12 @@ public class ProjectController {
         return ResponseEntity.ok(createdProject);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody ProjectEntity project, @PathVariable Long id) {
+    @PutMapping("/{name}")
+    public ResponseEntity<?> update(@RequestBody ProjectEntity project, @PathVariable String name) {
         try {
-            Optional<ProjectEntity> opProject = this.projectRepo.findById(id);
+            Optional<ProjectEntity> opProject = this.projectRepo.findByName(name);
             if (opProject.isPresent()) {
-                project.setId(id);
+                project.setName(name);
                 this.projectRepo.save(project);
                 return ResponseEntity.ok(project);
             } else {
@@ -65,9 +65,9 @@ public class ProjectController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        this.projectRepo.deleteById(id);
+    @DeleteMapping("/{name}")
+    public ResponseEntity<?> delete(@PathVariable String name) {
+        this.projectRepo.deleteByName(name);
         return ResponseEntity.ok().build();
     }
 }

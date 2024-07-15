@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.groovegather.back.config.JWTService;
 import com.groovegather.back.dtos.user.GetUserDto;
 import com.groovegather.back.dtos.user.UserDto;
 import com.groovegather.back.entities.GenreEntity;
@@ -17,26 +19,31 @@ import com.groovegather.back.repositories.GenreRepo;
 @Component
 public class UserDtoMapper {
 
-    @Autowired
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
     private GenreRepo genreRepo;
+
+    public UserDtoMapper(JWTService jwtService, GenreRepo genreRepo,
+            AuthenticationManager authenticationManager,
+            PasswordEncoder passwordEncoder) {
+        this.genreRepo = genreRepo;
+        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public UserEntity toUserEntity(UserDto userPostDto) {
         UserEntity userEntity = new UserEntity();
-        userEntity.setIsGoogle(userPostDto.getIsGoogle());
         if (userPostDto.getName() != null && !userPostDto.getName().equals("")) {
             userEntity.setName(userPostDto.getName());
         } else {
             userEntity.setName(userPostDto.getEmail());
         }
-        userEntity.setPassword(userPostDto.getPassword());
-        userEntity.setRepeatedPassword(userPostDto.getRepeatedPassword());
         userEntity.setEmail(userPostDto.getEmail());
         if (userPostDto.getPicture() != null) {
             userEntity.setPicture(userPostDto.getPicture());
         } else {
             userEntity.setPicture("https://www.picsum.photos/150/150");
         }
-        userEntity.setToken(userPostDto.getToken());
         if (userPostDto.getDescription() != null) {
             userEntity.setDescription(userPostDto.getDescription());
         } else {
@@ -70,7 +77,10 @@ public class UserDtoMapper {
             userEntity.setGenres(genres);
         }
 
-        userEntity.setToken(" ");
+        userEntity.setPassword(passwordEncoder.encode(userPostDto.getPassword()));
+        userEntity.setRepeatedPassword(passwordEncoder.encode(userPostDto.getRepeatedPassword()));
+        userEntity.setRole(UserRoleEnum.USER);
+
         return userEntity;
 
     }
@@ -79,11 +89,9 @@ public class UserDtoMapper {
         UserDto userGetDto = new UserDto();
         userGetDto.setId(userEntity.getId());
         userGetDto.setName(userEntity.getName());
-        userGetDto.setPassword("ok");
-        userGetDto.setRepeatedPassword("ok");
+        userGetDto.setRepeatedPassword("*");
         userGetDto.setEmail(userEntity.getEmail());
         userGetDto.setPicture(userEntity.getPicture());
-        userGetDto.setToken(userEntity.getToken());
         userGetDto.setDescription(userEntity.getDescription());
         userGetDto.setRole(userEntity.getRole());
         userGetDto.setSubscriptionLevel(userEntity.getSubscriptionLevel());
@@ -103,11 +111,9 @@ public class UserDtoMapper {
             userGetDto.setPassword(userEntity.getPassword());
             userGetDto.setEmail(userEntity.getEmail());
             userGetDto.setPicture(userEntity.getPicture());
-            userGetDto.setToken(userEntity.getToken());
             userGetDto.setDescription(userEntity.getDescription());
             userGetDto.setRole(userEntity.getRole());
             userGetDto.setSubscriptionLevel(userEntity.getSubscriptionLevel());
-            userGetDto.setIsGoogle(userEntity.getIsGoogle());
             userGetDto.setGenres(userEntity.getGenres().stream()
                     .map(GenreEntity::getName)
                     .collect(Collectors.toList()));

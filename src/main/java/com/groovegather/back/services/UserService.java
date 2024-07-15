@@ -1,12 +1,20 @@
 package com.groovegather.back.services;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.groovegather.back.config.JWTService;
 import com.groovegather.back.dtos.user.GetUserDto;
 import com.groovegather.back.dtos.user.UserDto;
 import com.groovegather.back.entities.GenreEntity;
@@ -16,57 +24,74 @@ import com.groovegather.back.repositories.GenreRepo;
 import com.groovegather.back.repositories.UserRepo;
 import com.groovegather.back.services.dtoMappers.UserDtoMapper;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepo userRepo;
+    private final UserRepo userRepo;
 
-    @Autowired
-    private GenreRepo genreRepo;
+    private final GenreRepo genreRepo;
 
-    @Autowired
-    private UserDtoMapper userDtoMapper; // Mapper class for UserEntity and UserPostDto
+    private final UserDtoMapper userDtoMapper;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final JWTService jwtService;
+
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepo userRepo, UserDtoMapper userDtoMapper, GenreRepo genreRepo,
+                       AuthenticationManager authenticationManager, JWTService jwtService, PasswordEncoder passwordEncoder) {
+        this.userRepo = userRepo;
+        this.userDtoMapper = userDtoMapper;
+        this.genreRepo = genreRepo;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public UserDto createUser(UserDto userPostDto) throws LoginException {
+
         this.validatePassword(userPostDto.getPassword());
 
         UserEntity userEntity = userDtoMapper.toUserEntity(userPostDto);
 
-        Boolean userIsAlreadyExist = isUserAlreadyExistAndNotGoogle(userPostDto);
-        Boolean userGoogleIsAlreadyExist = isUserAlreadyExistAndGoogle(userPostDto);
-
-        if ((Boolean.TRUE.equals(userPostDto.getIsGoogle()) && !userGoogleIsAlreadyExist)
-                || (!userIsAlreadyExist && userEntity.getPassword().equals(userEntity.getRepeatedPassword()))) {
+        Boolean userAlreadyExist = isUserAlreadyExist(userPostDto);
+        if (userAlreadyExist.equals(Boolean.FALSE)) {
+            System.out.println(userEntity);
             userRepo.save(userEntity);
             return userDtoMapper.toUserDto(userEntity);
-        } else if (userIsAlreadyExist && Boolean.FALSE.equals(userPostDto.getIsGoogle())) {
-            throw new LoginException("L'adresse email est déja utilisé pour un compte non google.");
-        } else if (Boolean.FALSE.equals(userPostDto.getIsGoogle())) {
+        } else if (userAlreadyExist.equals(Boolean.FALSE)
+                && !userEntity.getPassword().equals(userPostDto.getRepeatedPassword())) {
             throw new LoginException("Les mots de passes ne sont pas identiques.");
-        } else if (userGoogleIsAlreadyExist && Boolean.TRUE.equals(userPostDto.getIsGoogle())) {
-            throw new LoginException("L'adresse email est déja utilisé pour un compte google.");
+        } else {
+            throw new LoginException("L'adresse email est déja utilisé pour un compte enregistré.");
         }
-        return null;
     }
 
-    public UserDto logUser(UserDto userPostDto, boolean isLogin) throws LoginException {
+    public HttpServletResponse logUser(UserDto userPostDto, HttpServletResponse response) throws LoginException {
 
-        // Utilisez Optional pour éviter les NoSuchElementException
-        Optional<UserEntity> userOptional = userRepo.findByEmailAndIsGoogleFalse(userPostDto.getEmail());
+        try {
+            final Authentication authenticate = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(userPostDto.getEmail(), userPostDto.getPassword()));
 
-        if (userOptional.isPresent()) {
-            UserEntity userEntity = userOptional.get();
-            if (userPostDto.getPassword().equals(userEntity.getPassword())) {
-                return userDtoMapper.toUserDto(userEntity);
-            } else {
-                throw new LoginException("Mot de passe incorrect.");
+            if (authenticate.isAuthenticated()) {
+                Map<String, String> token = this.jwtService
+                        .generateToken(((UserEntity) authenticate.getPrincipal()).getEmail());
+                ResponseCookie cookie = ResponseCookie.from("token", token.get("Bearer"))
+                        .httpOnly(true)
+                        .secure(true)
+                        .path("/")
+                        .maxAge(7 * 24 * 60 * 60)
+                        .build();
+                response.addHeader("set-cookie", cookie.toString());
             }
-        } else {
-            throw new LoginException("Utilisateur non trouvé.");
+        } catch (BadCredentialsException b) {
+            throw new BadCredentialsException("Je ne vous connais pas!!");
         }
+        return response;
     }
 
     public Collection<GetUserDto> getAll() {
@@ -105,7 +130,6 @@ public class UserService {
         });
         Optional.ofNullable(userPatchDto.getEmail()).ifPresent(userEntity::setEmail);
         Optional.ofNullable(userPatchDto.getPicture()).ifPresent(userEntity::setPicture);
-        Optional.ofNullable(userPatchDto.getToken()).ifPresent(userEntity::setToken);
         Optional.ofNullable(userPatchDto.getDescription()).ifPresent(userEntity::setDescription);
         Optional.ofNullable(userPatchDto.getRole()).ifPresent(userEntity::setRole);
         Optional.ofNullable(userPatchDto.getSubscriptionLevel()).ifPresent(userEntity::setSubscriptionLevel);
@@ -120,19 +144,13 @@ public class UserService {
         }
     }
 
-    public UserDto getGoogleUserByEmail(String email) {
-
-        Optional<UserEntity> user = userRepo.findByEmailAndIsGoogleTrue(email);
-        return userDtoMapper.toUserDto(user.get());
+    public UserDto getByEmail(String email) {
+        Optional<UserEntity> user = userRepo.findByEmail(email);
+        return userDtoMapper.toUserDto(user.orElse(null));
     }
 
-    public boolean isUserAlreadyExistAndNotGoogle(UserDto userPostDto) {
-        Optional<UserEntity> user = userRepo.findByEmailAndIsGoogleFalse(userPostDto.getEmail());
-        return user.isPresent();
-    }
-
-    public boolean isUserAlreadyExistAndGoogle(UserDto userPostDto) {
-        Optional<UserEntity> user = userRepo.findByEmailAndIsGoogleTrue(userPostDto.getEmail());
+    public boolean isUserAlreadyExist(UserDto userPostDto) {
+        Optional<UserEntity> user = userRepo.findByEmail(userPostDto.getEmail());
         return user.isPresent();
     }
 
@@ -142,5 +160,6 @@ public class UserService {
             throw new LoginException(
                     "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.");
         }
+
     }
 }

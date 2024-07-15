@@ -35,8 +35,15 @@ public class SecurityConfiguration {
 				.authorizeHttpRequests(
 						request -> {
 							request
-									.requestMatchers("/auth/register").permitAll()
-									.requestMatchers("/auth/login").permitAll()
+									.requestMatchers("/api/v1/users/").permitAll()
+									.requestMatchers("/api/v1/users/register").permitAll()
+									.requestMatchers("/api/v1/users/login").permitAll()
+									.requestMatchers("/api/v1/users/user").permitAll()
+									.requestMatchers("/api/v1/projects").permitAll()
+									.requestMatchers("/api/v1/users/login").permitAll()
+									.requestMatchers("/api/v1/files").permitAll()
+									.requestMatchers("/api/v1/files/convert").permitAll()
+									.requestMatchers("/api/v1/files/download").permitAll()
 									.anyRequest().authenticated();
 						})
 				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

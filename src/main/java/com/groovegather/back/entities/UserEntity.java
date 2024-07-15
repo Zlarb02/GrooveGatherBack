@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.groovegather.back.enums.UserRoleEnum;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.groovegather.back.enums.UserRoleEnum;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -41,7 +40,7 @@ public class UserEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 200)
+    @Column(length = 200, unique = true)
     private String name;
 
     @Column(nullable = false, length = 200)
@@ -51,14 +50,11 @@ public class UserEntity implements UserDetails {
     @Transient
     private String repeatedPassword;
 
-    @Column(nullable = false, length = 200)
+    @Column(nullable = false, length = 200, unique = true)
     private String email;
 
-    @Column(nullable = false, length = 3000)
+    @Column(nullable = false, length = 500)
     private String picture;
-
-    @Column(nullable = false, length = 3000)
-    private String token;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
@@ -69,8 +65,14 @@ public class UserEntity implements UserDetails {
     @Column(nullable = false)
     private Integer subscriptionLevel;
 
-    @Column(nullable = false)
+    @Column
+    @Transient
     private Boolean isGoogle;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role));
+    }
 
     @Override
     public String getUsername() {
@@ -79,27 +81,22 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return UserDetails.super.isAccountNonExpired();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return UserDetails.super.isAccountNonLocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return UserDetails.super.isCredentialsNonExpired();
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role));
+        return UserDetails.super.isEnabled();
     }
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
