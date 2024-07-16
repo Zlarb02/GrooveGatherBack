@@ -10,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,16 +39,13 @@ public class UserService {
 
     private final JWTService jwtService;
 
-    private final PasswordEncoder passwordEncoder;
-
     public UserService(UserRepo userRepo, UserDtoMapper userDtoMapper, GenreRepo genreRepo,
-                       AuthenticationManager authenticationManager, JWTService jwtService, PasswordEncoder passwordEncoder) {
+            AuthenticationManager authenticationManager, JWTService jwtService, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.userDtoMapper = userDtoMapper;
         this.genreRepo = genreRepo;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     public UserDto createUser(UserDto userPostDto) throws LoginException {
@@ -60,7 +56,6 @@ public class UserService {
 
         Boolean userAlreadyExist = isUserAlreadyExist(userPostDto);
         if (userAlreadyExist.equals(Boolean.FALSE)) {
-            System.out.println(userEntity);
             userRepo.save(userEntity);
             return userDtoMapper.toUserDto(userEntity);
         } else if (userAlreadyExist.equals(Boolean.FALSE)
@@ -71,7 +66,8 @@ public class UserService {
         }
     }
 
-    public HttpServletResponse logUser(UserDto userPostDto, HttpServletResponse response) throws LoginException {
+    public HttpServletResponse logUser(UserDto userPostDto, HttpServletResponse response, Boolean isGoogle)
+            throws LoginException {
 
         try {
             final Authentication authenticate = authenticationManager.authenticate(
