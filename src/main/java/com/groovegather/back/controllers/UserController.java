@@ -26,7 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@CrossOrigin(value = "*")
+@CrossOrigin(value = "http://localhost:4200")
 public class UserController {
 
     private final UserRepo userRepo;
@@ -56,7 +56,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> register(@RequestBody UserDto userDto, HttpServletResponse response) {
         try {
             UserDto createdUser = userService.createUser(userDto);
             return ResponseEntity.ok(createdUser);
@@ -68,9 +68,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDto userDto, HttpServletResponse response) {
+    public ResponseEntity<?> login(@RequestBody UserDto userDto, HttpServletResponse response, Boolean isGoogle) {
         try {
-            userService.logUser(userDto, response);
+            userService.logUser(userDto, response, isGoogle);
             return ResponseEntity.ok().build();
         } catch (LoginException e) {
             throw new LoginException(e.getMessage());
@@ -88,9 +88,7 @@ public class UserController {
     @PatchMapping
     public ResponseEntity<UserDto> patch(@RequestBody UserDto userDto, @RequestParam(value = "id") Long id) {
         try {
-            System.out.println("hello");
             UserDto user = userService.getById(id);
-            System.out.println(user);
             user = userService.patchUser(user, userDto);
             return ResponseEntity.ok(user);
         } catch (Exception e) {
