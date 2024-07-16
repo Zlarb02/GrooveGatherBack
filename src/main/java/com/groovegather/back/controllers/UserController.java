@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.groovegather.back.config.JWTService;
 import com.groovegather.back.dtos.user.GetUserDto;
 import com.groovegather.back.dtos.user.UserDto;
 import com.groovegather.back.errors.LoginException;
@@ -26,16 +26,18 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@CrossOrigin(value = "http://localhost:4200")
 public class UserController {
 
     private final UserRepo userRepo;
 
     private static UserService userService;
 
-    public UserController(UserRepo userRepo, UserService userService) {
+    private static JWTService jwtService;
+
+    public UserController(UserRepo userRepo, UserService userService, JWTService jwtService) {
         this.userRepo = userRepo;
         this.userService = userService;
+        this.jwtService = jwtService;
     }
 
     @GetMapping

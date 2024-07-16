@@ -77,8 +77,8 @@ public class UserService {
                 Map<String, String> token = this.jwtService
                         .generateToken(((UserEntity) authenticate.getPrincipal()).getEmail());
                 ResponseCookie cookie = ResponseCookie.from("token", token.get("Bearer"))
-                        .httpOnly(true)
-                        .secure(true)
+                        .httpOnly(false)
+                        .secure(false)
                         .path("/")
                         .maxAge(7 * 24 * 60 * 60)
                         .build();
