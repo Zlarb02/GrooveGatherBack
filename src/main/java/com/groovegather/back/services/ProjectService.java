@@ -38,4 +38,9 @@ public class ProjectService {
         ProjectEntity projectEntity = projectRepo.findById(id).get();
         return projectDtoMapper.toProjectPostDto(projectEntity);
     }
+
+    public void incrementLikes(Long projectId, int likesToAdd) {
+        projectRepo.incrementLikes(projectId, likesToAdd);
+    }
+
 }
