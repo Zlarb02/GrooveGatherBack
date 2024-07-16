@@ -39,9 +39,11 @@ public class SecurityConfiguration {
 									.requestMatchers("/api/v1/users/register").permitAll()
 									.requestMatchers("/api/v1/users/login").permitAll()
 									.requestMatchers(HttpMethod.GET, "/api/v1/users/user*").permitAll()
-									.requestMatchers(HttpMethod.GET, "/api/v1/users").permitAll()
-									.requestMatchers(HttpMethod.GET, "/api/v1/projects*").permitAll()
-									.requestMatchers("/api/v1/files").permitAll()
+									.requestMatchers(HttpMethod.GET, "/api/v1/users").permitAll() // temporary
+									// .requestMatchers(HttpMethod.GET, "/api/v1/projects*").permitAll()
+
+									.requestMatchers("/api/v1/projects*").permitAll()
+									.requestMatchers("/api/v1/files*").permitAll()
 									.anyRequest().authenticated();
 						})
 				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
