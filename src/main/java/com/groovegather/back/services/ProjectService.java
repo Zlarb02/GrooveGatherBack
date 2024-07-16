@@ -39,8 +39,12 @@ public class ProjectService {
         return projectDtoMapper.toProjectPostDto(projectEntity);
     }
 
-    public void incrementLikes(Long projectId, int likesToAdd) {
+/*     public void incrementLikes(Long projectId, int likesToAdd) {
         projectRepo.incrementLikes(projectId, likesToAdd);
+    } */
+
+    public void incrementLikes2(String name, int likesToAdd) {
+        projectRepo.incrementLikes2(name, likesToAdd);
     }
 
 }

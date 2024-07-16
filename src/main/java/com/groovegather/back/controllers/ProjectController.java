@@ -71,10 +71,17 @@ public class ProjectController {
         this.projectRepo.deleteById(id);
         return ResponseEntity.ok().build();
     }
-        @PutMapping("/{projectId}/likes")
+/*         @PutMapping("/{projectId}/likes")
     public ResponseEntity<Void> incrementLikes(@PathVariable Long projectId, @RequestParam int likesToAdd) {
         projectService.incrementLikes(projectId, likesToAdd);
         return ResponseEntity.ok().build();
+    } */
+
+    @PutMapping("/{name}/likes")
+    public ResponseEntity<Void> incrementLikes2(@PathVariable String name, @RequestParam int likesToAdd) {
+        projectService.incrementLikes2(name, likesToAdd);
+        return ResponseEntity.ok().build();
     }
+
 
 }
