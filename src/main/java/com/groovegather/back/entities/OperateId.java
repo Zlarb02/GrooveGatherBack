@@ -15,5 +15,6 @@ public class OperateId implements Serializable {
 
     private Long userId;
 
-    private String projectId;
+    private Long projectId;
+
 }

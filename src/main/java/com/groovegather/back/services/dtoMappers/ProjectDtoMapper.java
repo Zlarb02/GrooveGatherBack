@@ -11,7 +11,6 @@ import com.groovegather.back.dtos.project.GetProject;
 import com.groovegather.back.dtos.project.PostProject;
 import com.groovegather.back.entities.GenreEntity;
 import com.groovegather.back.entities.ManageEntity;
-import com.groovegather.back.entities.OperateEntity;
 import com.groovegather.back.entities.ProjectEntity;
 import com.groovegather.back.entities.ProjectSkillEntity;
 import com.groovegather.back.entities.SkillEntity;
@@ -74,9 +73,13 @@ public class ProjectDtoMapper {
         Collection<ManageEntity> manageEntities = new ArrayList<>();
         // TODO : Mappage des fichiers
 
-        // mappage de l'operation create
-        Collection<OperateEntity> operateEntities = new ArrayList<>();
-        // TODO : Mappage des operations
+        
+        // Mappage des operations
+        // Créer une nouvelle entité OperateEntity et l'associer à l'utilisateur et au projet
+     
+
+
+        
 
         return projectEntity;
 

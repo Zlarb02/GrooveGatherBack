@@ -38,19 +38,19 @@ public class ProjectEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 200, unique = true)
+    @Column(nullable = true, length = 200, unique = true)
     private String name;
 
-    @Column(nullable = false, length = 2000)
+    @Column(nullable = true, length = 2000)
     private String description;
 
-    @Column(nullable = false, length = 200)
+    @Column(nullable = true, length = 200)
     private String color;
 
     @Column(nullable = false)
     private Integer likes = 0;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = true, updatable = false)
     @CreatedDate
     private LocalDate date;
     @ManyToMany
