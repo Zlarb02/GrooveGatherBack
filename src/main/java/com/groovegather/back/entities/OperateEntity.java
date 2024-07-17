@@ -49,6 +49,7 @@ public class OperateEntity {
     @Enumerated(value = jakarta.persistence.EnumType.STRING)
     private OperateEnum operation;
 
+
     @Column(nullable = true, columnDefinition = "TEXT")
     private String operationContent;
 

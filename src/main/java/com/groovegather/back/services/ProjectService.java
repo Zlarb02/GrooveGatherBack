@@ -40,12 +40,46 @@ public class ProjectService {
         return projectDtoMapper.toProjectPostDto(projectEntity);
     }
 
-/*     public void incrementLikes(Long projectId, int likesToAdd) {
-        projectRepo.incrementLikes(projectId, likesToAdd);
+
+
+/*     public void incrementLikes2(String name, int likesToAdd) {
+        projectRepo.incrementLikes2(name, likesToAdd);
     } */
 
-    public void incrementLikes2(String name, int likesToAdd) {
-        projectRepo.incrementLikes2(name, likesToAdd);
-    }
 
+
+
+   /*  public void incrementLikes2(String name, int likesToAdd, @AuthenticationPrincipal UserEntity user) {
+        ProjectEntity project = projectRepo.findByName(name).orElseThrow(() -> new RuntimeException("Project not found"));
+        
+        Optional<OperateEntity> existingOperate = operateRepo.findByOperationAndUserAndProject("LIKE", user.getId(), project.getId());
+
+        if (existingOperate.isPresent()) {
+            OperateEntity operate = existingOperate.get();
+            if (!"+1".equals(operate.getOperationContent())) {
+                operate.setOperation(OperateEnum.LIKE);
+                operate.setOperationContent("+1");
+                operate.setRole(OperateRoleEnum.VIEWER);
+                operate.setTimestamp(new Timestamp(System.currentTimeMillis()));
+                operateRepo.save(operate);
+            }
+        } else {
+            OperateEntity operate = new OperateEntity();
+            OperateId operateId = new OperateId(user.getId(), project.getId());
+            operate.setId(operateId);
+            operate.setUser(user);
+            operate.setProject(project);
+            operate.setTimestamp(new Timestamp(System.currentTimeMillis()));
+            operate.setOperation(OperateEnum.LIKE);
+            operate.setOperationContent("+1");
+            operate.setRole(OperateRoleEnum.VIEWER);
+            operateRepo.save(operate);
+        }
+
+        project.setLikes(project.getLikes() + likesToAdd);
+        projectRepo.save(project);
+    }
+ */
+
+    
 }
