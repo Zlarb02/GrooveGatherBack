@@ -65,10 +65,10 @@ public class ProjectService {
     }
 }
 
-/*
- * public void incrementLikes2(String name, int likesToAdd) {
- * projectRepo.incrementLikes2(name, likesToAdd);
- * }
+
+/*   public void incrementLikes2(String name, int likesToAdd) {
+ projectRepo.incrementLikes2(name, likesToAdd);
+ }
  */
 
 /*
