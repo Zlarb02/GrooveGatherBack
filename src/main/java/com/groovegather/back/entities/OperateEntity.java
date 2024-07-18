@@ -30,11 +30,11 @@ public class OperateEntity {
     @EmbeddedId
     private OperateId id;
 
-    @ManyToOne (cascade=CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @MapsId("userId")
     private UserEntity user;
 
-    @ManyToOne (cascade=CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @MapsId("projectId")
     private ProjectEntity project;
 
@@ -50,16 +50,16 @@ public class OperateEntity {
     @Enumerated(value = jakarta.persistence.EnumType.STRING)
     private OperateEnum operation;
 
-
     @Column(nullable = true, columnDefinition = "TEXT")
     private String operationContent;
 
-    public OperateEntity(OperateEnum operation, ProjectEntity project, UserEntity user){
+    public OperateEntity(OperateEnum operation, ProjectEntity project, UserEntity user, OperateRoleEnum role) {
         this.id = new OperateId(user.getId(), project.getId());
         this.operation = operation;
         this.project = project;
         this.user = user;
         this.timestamp = new Timestamp(System.currentTimeMillis());
-        }
+        this.role = role;
+    }
 
 }
