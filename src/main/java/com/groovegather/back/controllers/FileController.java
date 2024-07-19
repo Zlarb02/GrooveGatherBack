@@ -10,7 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +21,6 @@ import com.groovegather.back.services.CommandService;
 
 @RestController
 @RequestMapping("/api/v1/files")
-@CrossOrigin(value = "*")
 public class FileController {
     @Autowired
     private CommandService commandService;
@@ -43,8 +41,8 @@ public class FileController {
 
         // Retourner les liens de téléchargement pour les fichiers WAV et MP3
         Map<String, String> r = Map.of("wavUrl",
-                String.format("/api/v1/files/download?filename=%s", file.getOriginalFilename()),
-                "mp3Url", String.format("/api/v1/files/download?filename=%s", mp3File.getName()));
+                String.format("files/download?filename=%s", file.getOriginalFilename()),
+                "mp3Url", String.format("files/download?filename=%s", mp3File.getName()));
 
         return ResponseEntity.ok(r);
     }

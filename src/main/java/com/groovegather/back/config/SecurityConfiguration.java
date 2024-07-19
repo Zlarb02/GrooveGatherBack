@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,13 +39,12 @@ public class SecurityConfiguration {
 									.requestMatchers("/api/v1/users/register").permitAll()
 									.requestMatchers("/api/v1/users/login").permitAll()
 									// .requestMatchers(HttpMethod.GET, "/api/v1/users/user*").permitAll()
-									// .requestMatchers(HttpMethod.GET, "/api/v1/projects*").permitAll()
+									.requestMatchers(HttpMethod.GET, "/api/v1/projects*").permitAll()
+									.requestMatchers(HttpMethod.GET, "/api/v1/projects/*").permitAll()
 
 									.requestMatchers("/api/v1/users/user*").permitAll()
 									.requestMatchers("/api/v1/users*").permitAll()
-									.requestMatchers("/api/v1/projects*").permitAll()
-									.requestMatchers("/api/v1/projects/*").permitAll()
-									.requestMatchers("/api/v1/files/*").permitAll()
+									.requestMatchers("/api/v1/files/**").permitAll()
 									.anyRequest().authenticated();
 						})
 				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

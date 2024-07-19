@@ -3,7 +3,6 @@ package com.groovegather.back.services;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -39,14 +38,17 @@ public class ProjectService {
     private ProjectDtoMapper projectDtoMapper;
 
     // Méthode pour récupérer l'utilisateur actuel
-    private UserEntity getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
-        return userRepo.findByEmail(userDetails.getUsername())
+    private UserEntity getCurrentUser(String username) {
+        return userRepo.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     // Méthode pour créer un projet
-    public PostProject createProject(PostProject projectPostDto, UserEntity user) {
+    public PostProject createProject(PostProject projectPostDto, UserDetails userDetails) {
+
         ProjectEntity projectEntity = projectDtoMapper.toProjectEntity(projectPostDto);
+
+        UserEntity user = getCurrentUser(userDetails.getUsername());
 
         operateRepo.save(new OperateEntity(OperateEnum.CREATE, projectEntity, user, OperateRoleEnum.OWNER));
 

@@ -10,16 +10,23 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class CommandService {
+  @Value("${sound-files-dir}")
+  private String soundFilesDirStr;
 
-  private final Path soundFilesDir = Paths.get(System.getProperty("java.io.tmpdir"), "soundFiles");
+  Path soundFilesDir;
   private final Set<String> supportedAudioTypes = new HashSet<>(
       Arrays.asList("audio/wav", "audio/x-wav", "audio/flac", "audio/mpeg"));
 
-  public CommandService() throws Exception {
+  @PostConstruct
+  public void init() throws Exception {
+    soundFilesDir = Paths.get(soundFilesDirStr);
     // Créer le répertoire pour les fichiers audio s'il n'existe pas
     Files.createDirectories(soundFilesDir);
   }
