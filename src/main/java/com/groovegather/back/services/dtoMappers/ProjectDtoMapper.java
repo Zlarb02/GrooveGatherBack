@@ -73,14 +73,6 @@ public class ProjectDtoMapper {
         Collection<ManageEntity> manageEntities = new ArrayList<>();
         // TODO : Mappage des fichiers
 
-        
-        // Mappage des operations
-        // Créer une nouvelle entité OperateEntity et l'associer à l'utilisateur et au projet
-     
-
-
-        
-
         return projectEntity;
 
     }
