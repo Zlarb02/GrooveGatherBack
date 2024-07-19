@@ -1,6 +1,6 @@
 package com.groovegather.back.entities;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -40,7 +40,7 @@ public class OperateEntity {
 
     @Column
     @LastModifiedDate
-    private Timestamp timestamp;
+    private LocalDate localDate;
 
     @Column
     @Enumerated(value = jakarta.persistence.EnumType.STRING)
@@ -58,7 +58,7 @@ public class OperateEntity {
         this.operation = operation;
         this.project = project;
         this.user = user;
-        this.timestamp = new Timestamp(System.currentTimeMillis());
+        this.localDate = LocalDate.now();
         this.role = role;
     }
 

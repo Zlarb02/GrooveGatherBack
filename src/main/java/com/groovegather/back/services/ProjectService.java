@@ -45,6 +45,7 @@ public class ProjectService {
 
     // Méthode pour créer un projet
     public PostProject createProject(PostProject projectPostDto, UserDetails userDetails) {
+        System.out.println(projectPostDto);
 
         ProjectEntity projectEntity = projectDtoMapper.toProjectEntity(projectPostDto);
 
@@ -89,7 +90,7 @@ public class ProjectService {
  * operate.setOperation(OperateEnum.LIKE);
  * operate.setOperationContent("+1");
  * operate.setRole(OperateRoleEnum.VIEWER);
- * operate.setTimestamp(new Timestamp(System.currentTimeMillis()));
+ * operate.setTimestamp(new LocalDate(System.currentTimeMillis()));
  * operateRepo.save(operate);
  * }
  * } else {
@@ -98,7 +99,7 @@ public class ProjectService {
  * operate.setId(operateId);
  * operate.setUser(user);
  * operate.setProject(project);
- * operate.setTimestamp(new Timestamp(System.currentTimeMillis()));
+ * operate.setTimestamp(new LocalDate(System.currentTimeMillis()));
  * operate.setOperation(OperateEnum.LIKE);
  * operate.setOperationContent("+1");
  * operate.setRole(OperateRoleEnum.VIEWER);

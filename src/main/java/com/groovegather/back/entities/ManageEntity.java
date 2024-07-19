@@ -1,6 +1,6 @@
 package com.groovegather.back.entities;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -33,6 +33,6 @@ public class ManageEntity {
     private FileEntity file;
 
     @LastModifiedDate
-    private Timestamp timestamp;
+    private LocalDate localDate;
 
 }

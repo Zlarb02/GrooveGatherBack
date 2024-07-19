@@ -1,8 +1,8 @@
 package com.groovegather.back.dtos.manage;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 public record ManageDto(
-        Timestamp timestamp) {
+        LocalDate localDate) {
 
 }
