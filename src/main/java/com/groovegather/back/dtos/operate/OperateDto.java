@@ -1,14 +1,18 @@
 package com.groovegather.back.dtos.operate;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 import com.groovegather.back.enums.OperateEnum;
 import com.groovegather.back.enums.OperateRoleEnum;
 
-public record OperateDto(
-        Timestamp timestamp,
-        OperateRoleEnum role,
-        OperateEnum operation,
-        String operationContent) {
+import lombok.Data;
 
+@Data
+public class OperateDto {
+        LocalDate localDate;
+        OperateRoleEnum role;
+        OperateEnum operation;
+        String operationContent;
+        String user;
+        String project;
 }
