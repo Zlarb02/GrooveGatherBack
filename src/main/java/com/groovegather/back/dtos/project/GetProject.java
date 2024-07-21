@@ -16,4 +16,5 @@ public class GetProject {
     private List<String> genres;
     private List<String> skillsPresent;
     private List<String> skillsMissing;
+    private List<FileDto> files;
 }
