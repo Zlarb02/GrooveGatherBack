@@ -2,11 +2,13 @@ package com.groovegather.back.services.dtoMappers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.groovegather.back.dtos.project.FileDto;
 import com.groovegather.back.dtos.project.GetProject;
 import com.groovegather.back.dtos.project.PostProject;
 import com.groovegather.back.entities.GenreEntity;
@@ -26,10 +28,14 @@ public class ProjectDtoMapper {
     @Autowired
     private SkillRepo skillRepo;
 
+    @Autowired
+    private FileDtoMapper fileDtoMapper;
+
     public ProjectEntity toProjectEntity(PostProject projectPostDto) {
         ProjectEntity projectEntity = new ProjectEntity();
 
         projectEntity.setName(projectPostDto.getName());
+        System.out.println(projectPostDto.getDescription());
         projectEntity.setDescription(projectPostDto.getDescription());
         projectEntity.setColor(projectPostDto.getColor());
         projectEntity.setLikes(projectPostDto.getLikes() != null ? projectPostDto.getLikes() : 0);
@@ -69,10 +75,6 @@ public class ProjectDtoMapper {
         }
         projectEntity.setProjectSkills(projectSkills);
 
-        // mapage des fichiers
-        Collection<ManageEntity> manageEntities = new ArrayList<>();
-        // TODO : Mappage des fichiers
-
         return projectEntity;
 
     }
@@ -99,7 +101,19 @@ public class ProjectDtoMapper {
                 .map(projectSkill -> projectSkill.getSkill().getName())
                 .collect(Collectors.toList()));
 
+        // Transform and collect files to DTOs
+        if (projectEntity.getProjectManageFiles() != null) {
+            List<FileDto> fileDtos = projectEntity.getProjectManageFiles().stream()
+                    .map(ManageEntity::getFile)
+                    .map(fileDtoMapper::toFileDto)
+                    .collect(Collectors.toList());
+
+            projectPostDto.setFiles(fileDtos);
+        } else {
+            System.out.println("Aucun fichier associé au projet.");
+        }
         return projectPostDto;
+
     }
 
     public Collection<GetProject> toGetProjectsDto(Collection<ProjectEntity> projectEntities) {

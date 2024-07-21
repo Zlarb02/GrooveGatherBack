@@ -1,5 +1,6 @@
 package com.groovegather.back.controllers;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -10,7 +11,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -45,8 +45,8 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<PostProject> createProject(@ModelAttribute PostProject projectPostDto,
-            @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<PostProject> createProject(@RequestBody PostProject projectPostDto,
+            @AuthenticationPrincipal UserDetails userDetails) throws SQLException {
         PostProject createdProject = projectService.createProject(projectPostDto, userDetails);
         return ResponseEntity.ok(createdProject);
     }

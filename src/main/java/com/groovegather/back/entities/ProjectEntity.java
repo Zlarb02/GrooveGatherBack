@@ -53,6 +53,7 @@ public class ProjectEntity {
     @Column(nullable = true, updatable = false)
     @CreatedDate
     private LocalDate date;
+
     @ManyToMany
     @JoinTable(name = "project_genre", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "genre_name"))
     private Collection<GenreEntity> genres = new ArrayList<>();
@@ -60,7 +61,7 @@ public class ProjectEntity {
     @OneToMany(mappedBy = "project")
     private Collection<OperateEntity> userProjectOperations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "project", orphanRemoval = true)
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<ManageEntity> projectManageFiles = new ArrayList<>();
 
     @OneToMany(mappedBy = "project", cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.EAGER)

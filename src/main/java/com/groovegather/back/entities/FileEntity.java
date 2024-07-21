@@ -36,10 +36,10 @@ public class FileEntity {
     private Boolean isPrivate;
 
     @Column(nullable = false)
-    private Boolean isScore;
+    private Boolean isScore; // fichier de partition musicale ?
 
     @Column(nullable = false)
-    private Boolean isTeaser;
+    private Boolean isTeaser; // piste public du projet convertie en mp3 de qualité moyenne ?
 
     @Column(nullable = false)
     private String fileExtension;
@@ -48,8 +48,16 @@ public class FileEntity {
     private Long size;
 
     @Column(nullable = true)
-    private String convertedFileUrl; // URL du fichier converti
+    private String url; // URL du fichier converti
 
-    @OneToMany(mappedBy = "file", cascade = { CascadeType.MERGE, CascadeType.REFRESH })
+    @Column(nullable = false, unique = true)
+    private String fileHash; // Hash du fichier
+
+    @OneToMany(mappedBy = "file", cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE })
     private Collection<ManageEntity> projectManageFiles = new ArrayList<>();
+
+    public FileEntity(String name, Boolean isTeaser) {
+        this.name = name;
+        this.isTeaser = isTeaser;
+    }
 }
