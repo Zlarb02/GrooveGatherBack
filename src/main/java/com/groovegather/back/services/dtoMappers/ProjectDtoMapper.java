@@ -143,6 +143,18 @@ public class ProjectDtoMapper {
                             .map(projectSkill -> projectSkill.getSkill().getName())
                             .collect(Collectors.toList()));
 
+            // Transform and collect files to DTOs
+            if (projectEntity.getProjectManageFiles() != null) {
+                List<FileDto> fileDtos = projectEntity.getProjectManageFiles().stream()
+                        .map(ManageEntity::getFile)
+                        .map(fileDtoMapper::toFileDto)
+                        .collect(Collectors.toList());
+
+                projectGetDto.setFiles(fileDtos);
+            } else {
+                System.out.println("Aucun fichier associé au projet.");
+            }
+
             getProjectsDto.add(projectGetDto);
         }
 

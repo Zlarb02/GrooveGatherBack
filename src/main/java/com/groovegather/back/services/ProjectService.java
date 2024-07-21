@@ -4,6 +4,9 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -100,9 +103,58 @@ public class ProjectService {
         return projectDtoMapper.toProjectPostDto(projectEntity);
     }
 
-    public Collection<GetProject> getAll() {
+    public Collection<GetProject> getAllProjects() {
         Collection<ProjectEntity> projectEntities = projectRepo.findAll();
         return projectDtoMapper.toGetProjectsDto(projectEntities);
+    }
+
+    public Collection<GetProject> getFilteredAndSortedProjects(Optional<String> genre,
+            Optional<List<String>> skills,
+            Optional<String> sortBy,
+            Optional<String> direction) {
+
+        Collection<ProjectEntity> projects = projectRepo.findAll();
+
+        // Filter by genre
+        if (genre.isPresent()) {
+            projects = projects.stream()
+                    .filter(p -> p.getGenres().stream().anyMatch(g -> g.getName().equals(genre.get())))
+                    .collect(Collectors.toList());
+        }
+
+        // Filter by skills
+        if (skills.isPresent() && !skills.get().isEmpty()) {
+            projects = projects.stream()
+                    .filter(p -> p.getProjectSkills().stream()
+                            .anyMatch(ps -> skills.get().contains(ps.getSkill().getName())))
+                    .collect(Collectors.toList());
+        }
+
+        // Sort the projects
+        if (sortBy.isPresent()) {
+            String sortField = sortBy.get();
+            boolean ascending = !direction.isPresent() || !direction.get().equalsIgnoreCase("desc");
+
+            projects = projects.stream()
+                    .sorted((p1, p2) -> {
+                        int comparison = 0;
+                        switch (sortField) {
+                            case "date":
+                                comparison = p1.getDate().compareTo(p2.getDate());
+                                break;
+                            case "likes":
+                                comparison = Integer.compare(p1.getLikes(), p2.getLikes());
+                                break;
+                            // Add more sorting cases if necessary
+                            default:
+                                throw new IllegalArgumentException("Invalid sortBy parameter: " + sortField);
+                        }
+                        return ascending ? comparison : -comparison;
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        return projectDtoMapper.toGetProjectsDto(projects);
     }
 
     public PostProject getByName(String name) {
