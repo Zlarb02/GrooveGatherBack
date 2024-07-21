@@ -106,4 +106,10 @@ public class UserEntity implements UserDetails {
     @OneToMany(mappedBy = "user")
     private Collection<OperateEntity> userProjectOperations = new ArrayList<>();
 
+    @OneToMany(mappedBy = "sender")
+    private Collection<MessageEntity> sentMessages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver")
+    private Collection<MessageEntity> receivedMessages = new ArrayList<>();
+
 }
