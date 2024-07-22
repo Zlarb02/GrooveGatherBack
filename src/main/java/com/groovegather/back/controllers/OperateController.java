@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.groovegather.back.config.JWTService;
@@ -35,4 +36,14 @@ public class OperateController {
         }
     }
 
+    @GetMapping("/can-edit")
+    public ResponseEntity<Boolean> canEditProject(@AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam String projectName) {
+        try {
+            boolean canEdit = operateService.canEditProject(userDetails, projectName);
+            return ResponseEntity.ok(canEdit);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

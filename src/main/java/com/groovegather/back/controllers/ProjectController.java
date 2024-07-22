@@ -66,7 +66,7 @@ public class ProjectController {
         return ResponseEntity.ok(createdProject);
     }
 
-    @PutMapping("/{name}")
+    @PutMapping("/edit/{name}")
     public ResponseEntity<?> update(@RequestBody ProjectEntity project, @PathVariable String name) {
         try {
             Optional<ProjectEntity> opProject = this.projectRepo.findByName(name);
@@ -88,14 +88,4 @@ public class ProjectController {
         this.projectRepo.deleteByName(name);
         return ResponseEntity.ok().build();
     }
-
-    /*
-     * @PutMapping("/{name}/likes")
-     * public ResponseEntity<Void> incrementLikes2(@PathVariable String
-     * name, @RequestParam int likesToAdd) {
-     * projectService.incrementLikes2(name, likesToAdd);
-     * return ResponseEntity.ok().build();
-     * }
-     */
-
 }
