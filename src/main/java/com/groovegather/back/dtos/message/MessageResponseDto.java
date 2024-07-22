@@ -6,10 +6,14 @@ public class MessageResponseDto {
     private Long id;
     private String content;
     private LocalDateTime timestamp;
-    private String senderEmail;
-    private String receiverEmail;
+    private String senderName;
+    private String receiverName;
+    private String senderPicture;
+    private String receiverPicture;
+    private Long replyToMessageId; // Ajouté pour la réponse
+    private String replyToMessageContent; // Contenu du message auquel il répond
 
-    // Getters and setters
+    // Getters et setters
     public Long getId() {
         return id;
     }
@@ -34,19 +38,51 @@ public class MessageResponseDto {
         this.timestamp = timestamp;
     }
 
-    public String getSenderEmail() {
-        return senderEmail;
+    public String getSenderName() {
+        return senderName;
     }
 
-    public void setSenderEmail(String senderEmail) {
-        this.senderEmail = senderEmail;
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
     }
 
-    public String getReceiverEmail() {
-        return receiverEmail;
+    public String getReceiverName() {
+        return receiverName;
     }
 
-    public void setReceiverEmail(String receiverEmail) {
-        this.receiverEmail = receiverEmail;
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public String getSenderPicture() {
+        return senderPicture;
+    }
+
+    public void setSenderPicture(String senderPicture) {
+        this.senderPicture = senderPicture;
+    }
+
+    public String getReceiverPicture() {
+        return receiverPicture;
+    }
+
+    public void setReceiverPicture(String receiverPicture) {
+        this.receiverPicture = receiverPicture;
+    }
+
+    public Long getReplyToMessageId() {
+        return replyToMessageId;
+    }
+
+    public void setReplyToMessageId(Long replyToMessageId) {
+        this.replyToMessageId = replyToMessageId;
+    }
+
+    public String getReplyToMessageContent() {
+        return replyToMessageContent;
+    }
+
+    public void setReplyToMessageContent(String replyToMessageContent) {
+        this.replyToMessageContent = replyToMessageContent;
     }
 }
