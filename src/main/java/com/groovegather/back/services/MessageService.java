@@ -18,12 +18,14 @@ public class MessageService {
     @Autowired
     private MessageRepo messageRepo;
 
-    public MessageResponseDto sendMessage(UserEntity sender, UserEntity receiver, String content) {
+    public MessageResponseDto sendMessage(UserEntity sender, UserEntity receiver, String content,
+            MessageEntity replyToMessage) {
         MessageEntity message = new MessageEntity();
         message.setSender(sender);
         message.setReceiver(receiver);
         message.setContent(content);
         message.setTimestamp(LocalDateTime.now());
+        message.setReplyToMessage(replyToMessage);
         MessageEntity savedMessage = messageRepo.save(message);
 
         return convertToResponseDTO(savedMessage);
@@ -43,13 +45,23 @@ public class MessageService {
                 .collect(Collectors.toList());
     }
 
+    public MessageEntity getMessageById(Long id) {
+        return messageRepo.findById(id).orElseThrow();
+    }
+
     private MessageResponseDto convertToResponseDTO(MessageEntity message) {
         MessageResponseDto dto = new MessageResponseDto();
         dto.setId(message.getId());
         dto.setContent(message.getContent());
         dto.setTimestamp(message.getTimestamp());
-        dto.setSenderEmail(message.getSender().getEmail());
-        dto.setReceiverEmail(message.getReceiver() != null ? message.getReceiver().getEmail() : null);
+        dto.setSenderName(message.getSender().getName());
+        dto.setReceiverName(message.getReceiver() != null ? message.getReceiver().getName() : null);
+        dto.setSenderPicture(message.getSender().getPicture());
+        dto.setReceiverPicture(message.getReceiver() != null ? message.getReceiver().getPicture() : null);
+        if (message.getReplyToMessage() != null) {
+            dto.setReplyToMessageId(message.getReplyToMessage().getId());
+            dto.setReplyToMessageContent(message.getReplyToMessage().getContent());
+        }
         return dto;
     }
 }

@@ -1,16 +1,17 @@
 package com.groovegather.back.dtos.message;
 
 public class MessageRequestDto {
-    private String receiverEmail;
+    private String receiverName;
     private String content;
+    private Long replyToMessageId; // Ajouté pour la réponse
 
-    // Getters and setters
-    public String getReceiverEmail() {
-        return receiverEmail;
+    // Getters et setters
+    public String getReceiverName() {
+        return receiverName;
     }
 
-    public void setReceiverEmail(String receiverEmail) {
-        this.receiverEmail = receiverEmail;
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
     }
 
     public String getContent() {
@@ -19,5 +20,13 @@ public class MessageRequestDto {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Long getReplyToMessageId() {
+        return replyToMessageId;
+    }
+
+    public void setReplyToMessageId(Long replyToMessageId) {
+        this.replyToMessageId = replyToMessageId;
     }
 }
