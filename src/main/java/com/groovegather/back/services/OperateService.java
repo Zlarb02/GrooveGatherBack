@@ -1,6 +1,7 @@
 package com.groovegather.back.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,11 +26,6 @@ public class OperateService {
     @Autowired
     private OperateDtoMapper operateDtoMapper;
 
-    private UserEntity getCurrentUser(String username) {
-        return userRepo.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
     public List<OperateDto> getUserProjects(UserDetails userDetails) {
 
         UserEntity user = getCurrentUser(userDetails.getUsername());
@@ -39,6 +35,18 @@ public class OperateService {
 
         List<OperateDto> operationsDto = operateDtoMapper.toOperateDtos(operationsEntities);
         return operationsDto;
+    }
+
+    private UserEntity getCurrentUser(String username) {
+        return userRepo.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public boolean canEditProject(UserDetails userDetails, String projectName) {
+        UserEntity user = getCurrentUser(userDetails.getUsername());
+        Optional<List<OperateEntity>> operations = operateRepo.findByUserAndRole(user, OperateRoleEnum.OWNER);
+        return operations.map(ops -> ops.stream().anyMatch(op -> op.getProject().getName().equals(projectName)))
+                .orElse(false);
     }
 
 }
