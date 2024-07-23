@@ -187,8 +187,8 @@ public class ProjectController {
 
             // Créer un message de réponse
             MessageEntity responseMessage = new MessageEntity();
-            responseMessage.setSender(sender);
-            responseMessage.setReceiver(receiver);
+            responseMessage.setSender(receiver);
+            responseMessage.setReceiver(sender);
             responseMessage.setContent(responseContent);
             responseMessage.setTimestamp(LocalDateTime.now());
             responseMessage.setProject(project);

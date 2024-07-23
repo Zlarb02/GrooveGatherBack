@@ -51,5 +51,4 @@ public class OperateService {
                 .anyMatch(op -> op.getProject().getName().equals(projectName)))
                 .orElse(false);
     }
-
 }
