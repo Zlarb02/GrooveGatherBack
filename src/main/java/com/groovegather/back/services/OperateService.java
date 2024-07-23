@@ -44,8 +44,11 @@ public class OperateService {
 
     public boolean canEditProject(UserDetails userDetails, String projectName) {
         UserEntity user = getCurrentUser(userDetails.getUsername());
-        Optional<List<OperateEntity>> operations = operateRepo.findByUserAndRole(user, OperateRoleEnum.OWNER);
-        return operations.map(ops -> ops.stream().anyMatch(op -> op.getProject().getName().equals(projectName)))
+        List<OperateRoleEnum> roles = List.of(OperateRoleEnum.OWNER, OperateRoleEnum.ADMIN);
+        Optional<List<OperateEntity>> operations = operateRepo.findByUserAndRoleIn(user, roles);
+
+        return operations.map(ops -> ops.stream()
+                .anyMatch(op -> op.getProject().getName().equals(projectName)))
                 .orElse(false);
     }
 

@@ -4,7 +4,7 @@ public enum OperateEnum {
     CREATE,
     DELETE,
     UPDATE,
-    JOIN,
+    REQUEST,
     LEAVE,
     APPROVE,
     REJECT,

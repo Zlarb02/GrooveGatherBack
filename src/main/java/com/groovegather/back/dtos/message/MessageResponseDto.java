@@ -12,6 +12,7 @@ public class MessageResponseDto {
     private String receiverPicture;
     private Long replyToMessageId; // Ajouté pour la réponse
     private String replyToMessageContent; // Contenu du message auquel il répond
+    private Long projectId; // Ajouté pour stocker l'ID du projet
 
     // Getters et setters
     public Long getId() {
@@ -84,5 +85,13 @@ public class MessageResponseDto {
 
     public void setReplyToMessageContent(String replyToMessageContent) {
         this.replyToMessageContent = replyToMessageContent;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }
