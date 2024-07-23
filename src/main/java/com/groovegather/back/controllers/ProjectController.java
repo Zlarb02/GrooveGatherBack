@@ -1,8 +1,10 @@
 package com.groovegather.back.controllers;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +22,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.groovegather.back.dtos.operate.ParticipationRequestDto;
+import com.groovegather.back.dtos.operate.RequestToBeAdmin;
 import com.groovegather.back.dtos.project.GetProject;
 import com.groovegather.back.dtos.project.PostProject;
+import com.groovegather.back.entities.MessageEntity;
+import com.groovegather.back.entities.OperateEntity;
 import com.groovegather.back.entities.ProjectEntity;
+import com.groovegather.back.entities.UserEntity;
+import com.groovegather.back.enums.OperateEnum;
+import com.groovegather.back.enums.OperateRoleEnum;
+import com.groovegather.back.repositories.OperateRepo;
 import com.groovegather.back.repositories.ProjectRepo;
+import com.groovegather.back.services.MessageService;
 import com.groovegather.back.services.ProjectService;
 
 @RestController
@@ -36,6 +47,12 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
+    @Autowired
+    private OperateRepo operateRepo;
+
+    @Autowired
+    private MessageService messageService;
+
     @GetMapping
     public ResponseEntity<Collection<GetProject>> getAll() {
         return ResponseEntity.ok(projectService.getAllProjects());
@@ -44,11 +61,10 @@ public class ProjectController {
     @GetMapping("/filter")
     public ResponseEntity<Collection<GetProject>> getFilteredAndSortedProjects(
             @RequestParam Optional<String> genre,
-            @RequestParam Optional<String> skills, // Changed to String
+            @RequestParam Optional<String> skills,
             @RequestParam Optional<String> sortBy,
             @RequestParam Optional<String> direction) {
 
-        // Convert skills from comma-separated string to list
         Optional<List<String>> skillList = skills.map(s -> List.of(s.split(",")));
 
         return ResponseEntity.ok(projectService.getFilteredAndSortedProjects(genre, skillList, sortBy, direction));
@@ -78,8 +94,109 @@ public class ProjectController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Project not found");
             }
         } catch (Exception e) {
-            // Log the exception if logging is configured
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+        }
+    }
+
+    @PostMapping("/request-participation")
+    public ResponseEntity<Map<String, String>> requestParticipation(@RequestBody RequestToBeAdmin request,
+            @AuthenticationPrincipal UserEntity sender) {
+
+        // Récupère le projet basé sur le nom
+        Optional<ProjectEntity> optionalProject = projectRepo.findByName(request.getProjectName());
+
+        if (optionalProject.isPresent()) {
+            ProjectEntity project = optionalProject.get();
+
+            // Trouver l'utilisateur receveur à partir de la table 'operate' où le rôle est
+            // 'OWNER'
+            Optional<OperateEntity> operateOpt = operateRepo.findByProjectAndRole(project, OperateRoleEnum.OWNER)
+                    .flatMap(list -> list.stream().findFirst()); // Convertit la liste en stream et prend le premier
+                                                                 // élément
+
+            if (operateOpt.isPresent()) {
+                UserEntity receiver = operateOpt.get().getUser();
+
+                String baseContent = String.format(
+                        "L'utilisateur %s souhaite participer à votre projet %s. Voulez-vous approuver cette demande ?",
+                        sender.getUsername(), project.getName());
+
+                MessageEntity message = new MessageEntity();
+                message.setSender(sender);
+                message.setReceiver(receiver);
+                message.setContent(baseContent);
+                message.setTimestamp(LocalDateTime.now());
+                message.setProject(project); // Associe le message au projet
+                messageService.saveMessage(message);
+
+                Long messageId = message.getId();
+                String content = String.format(
+                        "L'utilisateur %s souhaite participer à votre projet %s. Voulez-vous approuver cette demande ?<br><br>"
+                                + "<button data-action='accept' data-message-id='%d'>Oui</button> "
+                                + "<button data-action='reject' data-message-id='%d'>Non</button>",
+                        sender.getUsername(), project.getName(), messageId, messageId);
+
+                message.setContent(content);
+                messageService.updateMessage(message);
+
+                return ResponseEntity.ok(Map.of("message", "Participation request sent."));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Owner not found"));
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Project not found"));
+        }
+    }
+
+    @PutMapping("/response")
+    public ResponseEntity<Map<String, String>> respondToParticipationRequest(
+            @RequestBody ParticipationRequestDto requestDto,
+            @AuthenticationPrincipal UserEntity receiver) {
+
+        try {
+            // Récupérer le message par son ID
+            MessageEntity message = messageService.getMessageById(requestDto.getMessageId());
+
+            // Récupérer le projet associé au message
+            ProjectEntity project = message.getProject();
+            if (project == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Project not found"));
+            }
+
+            // Récupérer l'expéditeur du message
+            UserEntity sender = message.getSender();
+            if (sender == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Sender not found"));
+            }
+
+            String responseContent;
+            if (requestDto.isAccepted()) {
+                // Ajouter l'utilisateur comme ADMIN
+                OperateEntity operateEntity = new OperateEntity(
+                        OperateEnum.APPROVE,
+                        project,
+                        sender,
+                        OperateRoleEnum.ADMIN);
+                operateRepo.save(operateEntity);
+                responseContent = String.format("Votre demande pour participer au projet %s a été acceptée.",
+                        project.getName());
+            } else {
+                responseContent = String.format("Votre demande pour participer au projet %s a été rejetée.",
+                        project.getName());
+            }
+
+            // Créer un message de réponse
+            MessageEntity responseMessage = new MessageEntity();
+            responseMessage.setSender(sender);
+            responseMessage.setReceiver(receiver);
+            responseMessage.setContent(responseContent);
+            responseMessage.setTimestamp(LocalDateTime.now());
+            responseMessage.setProject(project);
+            messageService.saveMessage(responseMessage);
+
+            return ResponseEntity.ok(Map.of("message", "Participation request response processed."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "An error occurred"));
         }
     }
 

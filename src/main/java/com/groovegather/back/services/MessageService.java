@@ -18,6 +18,20 @@ public class MessageService {
     @Autowired
     private MessageRepo messageRepo;
 
+    // Enregistre un message dans la base de données
+    public MessageEntity saveMessage(MessageEntity message) {
+        return messageRepo.save(message);
+    }
+
+    // Met à jour un message dans la base de données
+    public MessageEntity updateMessage(MessageEntity message) {
+        if (messageRepo.existsById(message.getId())) {
+            return messageRepo.save(message);
+        } else {
+            throw new RuntimeException("Message not found");
+        }
+    }
+
     public MessageResponseDto sendMessage(UserEntity sender, UserEntity receiver, String content,
             MessageEntity replyToMessage) {
         MessageEntity message = new MessageEntity();
