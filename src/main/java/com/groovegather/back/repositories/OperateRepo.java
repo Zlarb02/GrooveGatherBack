@@ -17,5 +17,4 @@ public interface OperateRepo extends JpaRepository<OperateEntity, OperateId> {
    Optional<List<OperateEntity>> findByProjectAndRole(ProjectEntity project, OperateRoleEnum role);
 
    Optional<List<OperateEntity>> findByUserAndRoleIn(UserEntity user, List<OperateRoleEnum> roles);
-
 }

@@ -49,21 +49,24 @@ public class UserService {
     }
 
     public UserDto createUser(UserDto userPostDto) throws LoginException {
-
         this.validatePassword(userPostDto.getPassword());
 
         UserEntity userEntity = userDtoMapper.toUserEntity(userPostDto);
 
-        Boolean userAlreadyExist = isUserAlreadyExist(userPostDto);
-        if (userAlreadyExist.equals(Boolean.FALSE)) {
-            userRepo.save(userEntity);
-            return userDtoMapper.toUserDto(userEntity);
-        } else if (userAlreadyExist.equals(Boolean.FALSE)
-                && !userEntity.getPassword().equals(userPostDto.getRepeatedPassword())) {
-            throw new LoginException("Les mots de passes ne sont pas identiques.");
-        } else {
-            throw new LoginException("L'adresse email est déja utilisé pour un compte enregistré.");
+        if (isUserAlreadyExist(userPostDto)) {
+            if (userRepo.findByEmail(userPostDto.getEmail()).isPresent()) {
+                throw new LoginException("L'adresse email est déjà utilisée.");
+            }
+            if (userRepo.findByName(userPostDto.getName()).isPresent()) {
+                throw new LoginException("Le nom est déjà utilisé.");
+            }
+            if (!userEntity.getPassword().equals(userPostDto.getRepeatedPassword())) {
+                throw new LoginException("Les mots de passe ne sont pas identiques.");
+            }
         }
+
+        userRepo.save(userEntity);
+        return userDtoMapper.toUserDto(userEntity);
     }
 
     public HttpServletResponse logUser(UserDto userPostDto, HttpServletResponse response, Boolean isGoogle)
@@ -111,6 +114,17 @@ public class UserService {
         // Appliquer les modifications de userPatchDto à l'entité existante
         updateEntityFromDto(userEntity, userPatchDto);
 
+        // Vérifier la duplication avant de sauvegarder
+        if (userPatchDto.getEmail() != null && !userPatchDto.getEmail().equals(userEntity.getEmail())
+                && userRepo.findByEmail(userPatchDto.getEmail()).isPresent()) {
+            throw new LoginException("L'adresse email est déjà utilisée.");
+        }
+
+        if (userPatchDto.getName() != null && !userPatchDto.getName().equals(userEntity.getName())
+                && userRepo.findByName(userPatchDto.getName()).isPresent()) {
+            throw new LoginException("Le nom est déjà utilisé.");
+        }
+
         // Sauvegarder l'entité mise à jour
         userRepo.save(userEntity);
 
@@ -157,5 +171,10 @@ public class UserService {
                     "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.");
         }
 
+    }
+
+    @Transactional
+    public void deleteUserByEmail(String email) {
+        userRepo.deleteByEmail(email);
     }
 }

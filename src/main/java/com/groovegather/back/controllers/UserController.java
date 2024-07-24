@@ -4,12 +4,12 @@ import java.util.Collection;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -81,26 +81,29 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody UserDto user, @PathVariable Long id) {
-
-        return ResponseEntity.ok().build();
-    }
-
     @PatchMapping
-    public ResponseEntity<UserDto> patch(@RequestBody UserDto userDto, @RequestParam(value = "id") Long id) {
+    public ResponseEntity<?> patch(@RequestBody UserDto userDto, @RequestParam(value = "id") Long id) {
         try {
             UserDto user = userService.getById(id);
             user = userService.patchUser(user, userDto);
             return ResponseEntity.ok(user);
+        } catch (LoginException e) {
+            throw new LoginException(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> delete(@RequestParam(value = "email") String email) {
-        this.userRepo.deleteByEmail(email);
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUserByEmail(@RequestParam String email) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String authenticatedUserEmail = authentication.getName(); // Assumes email is the principal
+
+        if (!email.equals(authenticatedUserEmail)) {
+            throw new LoginException("You can only delete your own account.");
+        }
+
+        userService.deleteUserByEmail(email);
         return ResponseEntity.ok().build();
     }
 }
