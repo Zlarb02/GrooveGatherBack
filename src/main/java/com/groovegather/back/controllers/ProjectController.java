@@ -118,7 +118,7 @@ public class ProjectController {
                 UserEntity receiver = operateOpt.get().getUser();
 
                 String baseContent = String.format(
-                        "L'utilisateur %s souhaite participer à votre projet %s. Voulez-vous approuver cette demande ?",
+                        "L'utilisateur %s souhaite participer au projet %s.",
                         sender.getUsername(), project.getName());
 
                 MessageEntity message = new MessageEntity();
@@ -132,8 +132,8 @@ public class ProjectController {
                 Long messageId = message.getId();
                 String content = String.format(
                         "L'utilisateur %s souhaite participer à votre projet %s. Voulez-vous approuver cette demande ?<br><br>"
-                                + "<button data-action='accept' data-message-id='%d'>Oui</button> "
-                                + "<button data-action='reject' data-message-id='%d'>Non</button>",
+                                + "<button data-action='accept' data-message-id='%d'></button> "
+                                + "<button data-action='reject' data-message-id='%d'></button>",
                         sender.getUsername(), project.getName(), messageId, messageId);
 
                 message.setContent(content);
@@ -178,10 +178,10 @@ public class ProjectController {
                         sender,
                         OperateRoleEnum.ADMIN);
                 operateRepo.save(operateEntity);
-                responseContent = String.format("Votre demande pour participer au projet %s a été acceptée.",
+                responseContent = String.format("Demande pour participer au projet %s acceptée !",
                         project.getName());
             } else {
-                responseContent = String.format("Votre demande pour participer au projet %s a été rejetée.",
+                responseContent = String.format("Demande pour participer au projet %s rejetée.",
                         project.getName());
             }
 

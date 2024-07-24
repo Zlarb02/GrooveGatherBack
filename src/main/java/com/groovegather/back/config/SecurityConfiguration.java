@@ -44,7 +44,10 @@ public class SecurityConfiguration {
 
 									.requestMatchers("/api/v1/users/user*").permitAll()
 									.requestMatchers("/api/v1/users*").permitAll()
+									.requestMatchers(HttpMethod.DELETE, "/api/v1/users/delete*").authenticated()
 									.requestMatchers("/api/v1/files/**").permitAll()
+
+									.requestMatchers("/api/v1/operations/project-owner").permitAll()
 									.anyRequest().authenticated();
 						})
 				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
