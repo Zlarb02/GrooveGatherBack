@@ -10,7 +10,7 @@ public class FileDtoMapper {
 
     public FileDto toFileDto(FileEntity fileEntity) {
 
-        return new FileDto(fileEntity.getUrl(), fileEntity.getIsTeaser(), fileEntity.getName(),
+        return new FileDto(fileEntity.getId(), fileEntity.getUrl(), fileEntity.getIsTeaser(), fileEntity.getName(),
                 fileEntity.getSize());
     }
 }

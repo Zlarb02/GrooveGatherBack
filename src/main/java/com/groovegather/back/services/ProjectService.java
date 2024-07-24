@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ import com.groovegather.back.repositories.ProjectRepo;
 import com.groovegather.back.repositories.UserRepo;
 import com.groovegather.back.services.dtoMappers.ProjectDtoMapper;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class ProjectService {
 
@@ -53,6 +56,73 @@ public class ProjectService {
 
     @Autowired
     private FileRepo fileRepo;
+
+    @Transactional
+    public PostProject updateProject(String projectName, PostProject projectUpdateDto, UserDetails userDetails) {
+        ProjectEntity projectEntity = projectRepo.findByName(projectName)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+
+        // Update project details
+        if (projectUpdateDto.getDescription() != null) {
+            projectEntity.setDescription(projectUpdateDto.getDescription());
+        }
+        if (projectUpdateDto.getColor() != null) {
+            projectEntity.setColor(projectUpdateDto.getColor());
+        }
+
+        // Handle file updates
+        Set<Long> existingFileIds = projectEntity.getProjectManageFiles().stream()
+                .map(manageEntity -> manageEntity.getFile().getId())
+                .collect(Collectors.toSet());
+
+        Set<String> updatedFileUrls = projectUpdateDto.getFiles().stream()
+                .map(FileDto::getUrl)
+                .collect(Collectors.toSet());
+
+        // Add new files
+        Collection<ManageEntity> manageEntities = new ArrayList<>();
+        for (FileDto fileDto : projectUpdateDto.getFiles()) {
+            if (!existingFileIds.contains(fileDto.getId())) {
+                FileEntity fileEntity = fileRepo.findByUrl(fileDto.getUrl()).orElse(null);
+                if (fileEntity == null) {
+                    fileEntity = new FileEntity();
+                    fileEntity.setUrl(fileDto.getUrl());
+                    fileEntity.setName(fileDto.getUrl().substring(fileDto.getUrl().lastIndexOf("/") + 1));
+                    fileEntity.setDescription("Description par défaut");
+                    fileEntity.setIsPrivate(false);
+                    fileEntity.setIsScore(false);
+                    fileEntity.setIsTeaser(fileDto.getIsTeaser());
+                    fileEntity
+                            .setFileExtension('.' + fileDto.getUrl().substring(fileDto.getUrl().lastIndexOf(".") + 1));
+                    fileEntity.setFileHash(HashUtil.generateSHA256Hash(fileDto.getUrl()));
+                    fileEntity.setSize(0L);
+                    fileEntity = fileRepo.save(fileEntity);
+                }
+                fileEntity.setIsTeaser(fileDto.getIsTeaser());
+                ManageEntity manageEntity = new ManageEntity(projectEntity, fileEntity);
+                manageEntities.add(manageEntity);
+            }
+
+            manageRepo.saveAll(manageEntities);
+
+            projectEntity.setProjectManageFiles(manageEntities);
+        }
+
+        // Remove old files
+        for (ManageEntity manageEntity : projectEntity.getProjectManageFiles()) {
+            if (!updatedFileUrls.contains(manageEntity.getFile().getUrl())) {
+                manageRepo.delete(manageEntity);
+            }
+        } // Remove old files
+        for (ManageEntity manageEntity : projectEntity.getProjectManageFiles()) {
+            if (!updatedFileUrls.contains(manageEntity.getFile().getUrl())) {
+                manageRepo.delete(manageEntity);
+            }
+        }
+        projectRepo.save(projectEntity);
+
+        return projectDtoMapper.toProjectPostDto(projectEntity);
+    }
 
     private UserEntity getCurrentUser(String username) {
         return userRepo.findByEmail(username)
@@ -163,46 +233,3 @@ public class ProjectService {
         return projectDtoMapper.toProjectPostDto(projectEntity);
     }
 }
-
-/*
- * public void incrementLikes2(String name, int likesToAdd) {
- * projectRepo.incrementLikes2(name, likesToAdd);
- * }
- */
-
-/*
- * public void incrementLikes2(String name, int
- * likesToAdd, @AuthenticationPrincipal UserEntity user) {
- * ProjectEntity project = projectRepo.findByName(name).orElseThrow(() -> new
- * RuntimeException("Project not found"));
- * 
- * Optional<OperateEntity> existingOperate =
- * operateRepo.findByOperationAndUserAndProject("LIKE", user.getId(),
- * project.getId());
- * 
- * if (existingOperate.isPresent()) {
- * OperateEntity operate = existingOperate.get();
- * if (!"+1".equals(operate.getOperationContent())) {
- * operate.setOperation(OperateEnum.LIKE);
- * operate.setOperationContent("+1");
- * operate.setRole(OperateRoleEnum.VIEWER);
- * operate.setTimestamp(new LocalDate(System.currentTimeMillis()));
- * operateRepo.save(operate);
- * }
- * } else {
- * OperateEntity operate = new OperateEntity();
- * OperateId operateId = new OperateId(user.getId(), project.getId());
- * operate.setId(operateId);
- * operate.setUser(user);
- * operate.setProject(project);
- * operate.setTimestamp(new LocalDate(System.currentTimeMillis()));
- * operate.setOperation(OperateEnum.LIKE);
- * operate.setOperationContent("+1");
- * operate.setRole(OperateRoleEnum.VIEWER);
- * operateRepo.save(operate);
- * }
- * 
- * project.setLikes(project.getLikes() + likesToAdd);
- * projectRepo.save(project);
- * }
- */
