@@ -103,6 +103,7 @@ public class FileController {
             FileEntity existingFile = fileRepository.findByFileHash(fileHash);
             if (existingFile != null) {
                 fileDtos.add(new FileDto(
+                        existingFile.getId(),
                         existingFile.getUrl(),
                         existingFile.getIsTeaser(),
                         existingFile.getName(),
@@ -131,6 +132,7 @@ public class FileController {
             fileRepository.save(fileEntity);
 
             fileDtos.add(new FileDto(
+                    fileEntity.getId(),
                     fileEntity.getUrl(),
                     fileEntity.getIsTeaser(),
                     originalFilename,
